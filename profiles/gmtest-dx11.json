@@ -1,0 +1,9 @@
+{
+  "id": "gmtest-dx11",
+  "name": "gmtest dx11 (prueba sintética de traductor)",
+  "status": "herramienta",
+  "api": "DX11",
+  "launch": { "mode": "exe", "exe": "C:\\gmtest.exe", "args": ["dx11", "600"] },
+  "graphics": { "backend": "dxmt", "candidates": ["dxmt","d3dmetal","wined3d"] },
+  "notes": ["Prueba propia (tools/gmtest): reporta el adaptador que ve el juego y los FPS de presentación."]
+}

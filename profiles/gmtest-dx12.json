@@ -1,0 +1,9 @@
+{
+  "id": "gmtest-dx12",
+  "name": "gmtest dx12 (prueba sintética de traductor)",
+  "status": "herramienta",
+  "api": "DX12",
+  "launch": { "mode": "exe", "exe": "C:\\gmtest.exe", "args": ["dx12", "600"] },
+  "graphics": { "backend": "d3dmetal", "candidates": ["d3dmetal"] },
+  "notes": ["Prueba propia (tools/gmtest): reporta el adaptador que ve el juego y los FPS de presentación."]
+}

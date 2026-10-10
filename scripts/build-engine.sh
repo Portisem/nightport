@@ -21,7 +21,8 @@ export OBJC="/usr/bin/clang -arch x86_64"
 export CFLAGS="-O2 -Wno-implicit-function-declaration -Wno-deprecated-declarations -Wno-format -Wno-incompatible-pointer-types -Wno-int-conversion"
 export CROSSCFLAGS="-O2"
 export CPPFLAGS="-I$TC/include"
-export LDFLAGS="-L$TC/lib -Wl,-headerpad_max_install_names"
+# rpath: herramientas de build (sfnt2fon) enlazan freetype con @rpath
+export LDFLAGS="-L$TC/lib -Wl,-rpath,$TC/lib -Wl,-headerpad_max_install_names"
 export PKG_CONFIG_PATH="$TC/lib/pkgconfig:$TC/share/pkgconfig"
 export PKG_CONFIG_LIBDIR="$PKG_CONFIG_PATH"
 

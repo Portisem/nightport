@@ -14,3 +14,4 @@
 *.tar.xz
 
 .DS_Store
+tools/gmtest/*.exe

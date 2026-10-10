@@ -42,7 +42,7 @@ public enum Launcher {
             args = [steamExe, "-applaunch", String(appId)]
         case .exe:
             guard let exe = launch.exe else { throw GMError("El perfil \(profile.id) no define launch.exe") }
-            args = [exe.hasPrefix("C:") ? exe : steamCommon + exe]
+            args = [exe.contains(":\\") ? exe : steamCommon + exe]
         }
         args += launch.args ?? []
 
@@ -75,6 +75,14 @@ public enum Launcher {
             let lib64 = engine.root.appendingPathComponent("lib64")
             env["DYLD_FALLBACK_LIBRARY_PATH"] = lib64.path + ":/usr/lib"
             env["GST_PLUGIN_SYSTEM_PATH"] = lib64.appendingPathComponent("gstreamer-1.0").path
+            // DLLs que el motor agrega después de crear el bottle: sin su copia en system32
+            // Wine no las considera instaladas (p. ej. winemetal.dll de DXMT).
+            for (arch, dir) in [("x86_64-windows", "system32"), ("i386-windows", "syswow64")] {
+                let src = engine.root.appendingPathComponent("lib/wine/\(arch)/winemetal.dll")
+                if FileManager.default.fileExists(atPath: src.path) {
+                    dllCopies.append((src, bottle.driveC.appendingPathComponent("windows/\(dir)/winemetal.dll")))
+                }
+            }
             if backend != .wined3d {
                 guard let dir = engine.backendDirectory(backend) else {
                     throw GMError("El motor \(engine.name) no trae \(backend.rawValue). Disponibles: \(engine.availableBackends.map(\.rawValue))")
@@ -140,7 +148,8 @@ public enum Launcher {
         let header = "# gmac \(plan.profile.id) backend=\(plan.backend.rawValue) engine=\(plan.engine.name)\n"
             + Shell.describe(plan.engine.wine, plan.arguments, environment: plan.environment) + "\n\n"
         try header.write(to: plan.logFile, atomically: true, encoding: .utf8)
-        let baseEnv = Steam.engineEnvironment(plan.engine).merging(["WINEPREFIX": plan.bottle.url.path, "WINEDEBUG": "-all"]) { _, n in n }
+        // Mismo entorno que el juego: si el wineserver arranca sin WINEMSYNC, el juego ya no puede conectarse.
+        let baseEnv = plan.environment.merging(["WINEDEBUG": "-all"]) { _, n in n }
         for step in plan.preSteps {
             try Shell.run(plan.engine.wine, step, environment: baseEnv, log: plan.logFile)
         }

@@ -26,7 +26,13 @@ cp -a "$TC/lib/gstreamer-1.0" "$PREFIX/lib64/gstreamer-1.0"
 echo "→ DXMT $(basename "$DXMT")"
 rm -rf "$PREFIX/lib/dxmt"
 mkdir -p "$PREFIX/lib/dxmt"
-cp -a "$DXMT"/x86_64-windows "$DXMT"/i386-windows "$DXMT"/x86_64-unix "$PREFIX/lib/dxmt/"
+cp -a "$DXMT"/x86_64-windows "$DXMT"/i386-windows "$PREFIX/lib/dxmt/"
+# winemetal enlaza @rpath/ntdll.so y winemac.so (@loader_path): debe vivir junto a Wine, como en CrossOver.
+# En lib/dxmt quedan solo d3d11/dxgi/d3d10core/nvngx/nvapi64, que se eligen con WINEDLLPATH_PRIORITY.
+cp "$DXMT/x86_64-unix/winemetal.so" "$PREFIX/lib/wine/x86_64-unix/"
+cp "$DXMT/x86_64-windows/winemetal.dll" "$PREFIX/lib/wine/x86_64-windows/"
+cp "$DXMT/i386-windows/winemetal.dll" "$PREFIX/lib/wine/i386-windows/"
+rm -f "$PREFIX"/lib/dxmt/*/winemetal.dll
 
 echo "→ D3DMetal (GPTK 3.0)"
 G="$PREFIX/lib64/apple_gptk"
@@ -38,6 +44,13 @@ mv "$G/wine/x86_64-unix/nvngx-on-metalfx.so" "$G/wine/x86_64-unix/nvngx.so"
 mv "$G/wine/x86_64-windows/nvngx-on-metalfx.dll" "$G/wine/x86_64-windows/nvngx.dll"
 # Los .so usan @rpath=@loader_path para libd3dshared.dylib
 ln -sf ../../external/libd3dshared.dylib "$G/wine/x86_64-unix/libd3dshared.dylib"
+
+echo "→ Wine Mono / Gecko (evita el diálogo de instalación al crear bottles)"
+ADD="$R/dl/addons"
+mkdir -p "$PREFIX/share/wine/mono" "$PREFIX/share/wine/gecko"
+[ -d "$PREFIX/share/wine/mono/wine-mono-10.4.1" ] || tar -xJf "$ADD/wine-mono-10.4.1-x86.tar.xz" -C "$PREFIX/share/wine/mono"
+[ -d "$PREFIX/share/wine/gecko/wine-gecko-2.47.4-x86" ] || tar -xJf "$ADD/wine-gecko-2.47.4-x86.tar.xz" -C "$PREFIX/share/wine/gecko"
+[ -d "$PREFIX/share/wine/gecko/wine-gecko-2.47.4-x86_64" ] || tar -xJf "$ADD/wine-gecko-2.47.4-x86_64.tar.xz" -C "$PREFIX/share/wine/gecko"
 
 cat > "$PREFIX/engine.json" <<EOF
 {
