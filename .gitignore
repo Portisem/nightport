@@ -1,0 +1,16 @@
+# CrossOver extraído: SOLO referencia local. Es software propietario, nunca se versiona ni se redistribuye.
+/Contents/
+
+# Build de Swift
+/.build/
+/.swiftpm/
+*.xcodeproj/xcuserdata/
+
+# Motores, D3DMetal (GPTK) y fuentes descargadas: viven fuera del repo
+/engines/
+/vendor/
+*.dmg
+*.tar.gz
+*.tar.xz
+
+.DS_Store

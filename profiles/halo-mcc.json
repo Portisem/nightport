@@ -1,0 +1,17 @@
+{
+  "id": "halo-mcc",
+  "name": "Halo: The Master Chief Collection",
+  "steamAppId": 976730,
+  "status": "probando",
+  "api": "DX11 (64-bit, UE4 shell + motores Blam)",
+  "launch": {
+    "mode": "exe",
+    "exe": "Halo The Master Chief Collection\\MCC\\Binaries\\Win64\\MCC-Win64-Shipping.exe"
+  },
+  "graphics": { "backend": "dxmt", "candidates": ["dxmt", "d3dmetal", "dxvk"] },
+  "notes": [
+    "Se lanza el ejecutable directo = modo SIN anti-cheat (Easy Anti-Cheat no funciona en Wine). Campaña, Forge y custom offline sí; matchmaking no.",
+    "Hipótesis principal: DXMT (DX11 nativo a Metal) rinde mejor que D3DMetal en este juego. Medir ambos.",
+    "Steam debe estar abierto en el bottle antes de lanzar (DRM de Steamworks)."
+  ]
+}

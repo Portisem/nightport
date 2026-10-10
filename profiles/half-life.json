@@ -1,0 +1,13 @@
+{
+  "id": "half-life",
+  "name": "Half-Life (y GoldSrc: CS 1.6, Opposing Force, Blue Shift, DoD, TFC…)",
+  "steamAppId": 70,
+  "status": "pendiente",
+  "api": "OpenGL (32-bit, GoldSrc)",
+  "launch": { "mode": "steam" },
+  "graphics": { "backend": "wined3d" },
+  "notes": [
+    "macOS ya no corre la versión nativa (⊘ en Steam). En Wine usa OpenGL directo: el traductor DX no aplica.",
+    "Valida soporte 32-bit (WoW64) del motor."
+  ]
+}

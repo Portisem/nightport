@@ -1,0 +1,13 @@
+{
+  "id": "_defaults",
+  "name": "Valores por defecto",
+  "graphics": { "backend": "d3dmetal" },
+  "sync": "msync",
+  "rosettaAVX": true,
+  "retina": false,
+  "metalHUD": false,
+  "windowsVersion": "win10",
+  "wineDebug": "-all",
+  "env": {},
+  "notes": []
+}

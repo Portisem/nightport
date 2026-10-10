@@ -1,0 +1,16 @@
+{
+  "id": "black-myth-wukong",
+  "name": "Black Myth: Wukong",
+  "steamAppId": 2358720,
+  "status": "probando",
+  "api": "DX12 (UE5, 64-bit)",
+  "launch": { "mode": "steam" },
+  "graphics": { "backend": "d3dmetal", "candidates": ["d3dmetal"] },
+  "metalFX": true,
+  "dxr": false,
+  "notes": [
+    "DX12 → solo D3DMetal (Apple GPTK). DLSS se traduce a MetalFX: dejar DLSS activo en el juego.",
+    "Drops: sospechosos = compilación de shaders (mejora tras jugar), pool de streaming de texturas en 384 MB (bajo para 48 GB) y FPS sin tope.",
+    "Prueba: tope de FPS fijo (40 o 60) para estabilizar frametimes."
+  ]
+}

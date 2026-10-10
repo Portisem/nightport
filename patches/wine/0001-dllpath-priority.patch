@@ -1,0 +1,27 @@
+--- a/dlls/ntdll/unix/loader.c	2026-10-10 17:13:30
++++ b/dlls/ntdll/unix/loader.c	2026-10-10 17:13:30
+@@ -387,13 +387,24 @@
+ static void set_dll_path(void)
+ {
+     char *p, *path = getenv( "WINEDLLPATH" );
++    /* GamingMac: directories searched BEFORE Wine's own builtins, used to select a
++     * graphics translation layer (D3DMetal / DXMT / DXVK) per game. */
++    char *priority = getenv( "WINEDLLPATH_PRIORITY" );
+     int i, count = 0;
+ 
+     if (path) for (p = path, count = 1; *p; p++) if (*p == ':') count++;
++    if (priority && *priority) for (p = priority, count++; *p; p++) if (*p == ':') count++;
+ 
+     dll_paths = malloc( (count + 2) * sizeof(*dll_paths) );
+     count = 0;
+ 
++    if (priority && *priority)
++    {
++        priority = strdup( priority );
++        for (p = strtok( priority, ":" ); p; p = strtok( NULL, ":" )) dll_paths[count++] = strdup( p );
++        free( priority );
++    }
++
+     if (!build_dir) dll_paths[count++] = dll_dir;
+ 
+     if (path)

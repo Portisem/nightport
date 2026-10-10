@@ -1,0 +1,12 @@
+{
+  "id": "it-specialist-simulator",
+  "name": "IT Specialist Simulator",
+  "steamAppId": 3266090,
+  "status": "smoke-test",
+  "api": "DX11 (Unity, 64-bit)",
+  "launch": { "mode": "steam" },
+  "graphics": { "backend": "dxmt", "candidates": ["dxmt", "d3dmetal", "dxvk"] },
+  "notes": [
+    "Juego ligero (2.5 GB) para validar el motor de punta a punta antes de los pesados."
+  ]
+}
