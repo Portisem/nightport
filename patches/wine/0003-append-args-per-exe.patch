@@ -1,0 +1,44 @@
+--- a/dlls/kernelbase/process.c	2026-10-11 00:41:30
++++ b/dlls/kernelbase/process.c	2026-10-11 00:41:39
+@@ -567,6 +567,41 @@
+         }
+     }
+ 
++    /* GamingMac: append extra arguments to specific executables, configured per game:
++     *   GMAC_APPEND_ARGS="steamwebhelper.exe=--in-process-gpu --no-sandbox|other.exe=-foo"
++     * Chromium child processes (already carrying "--type=") inherit flags from their parent
++     * and are left untouched. */
++    {
++        WCHAR spec[1024], *entry, *next, *eq;
++        DWORD len = GetEnvironmentVariableW( L"GMAC_APPEND_ARGS", spec, ARRAY_SIZE(spec) );
++        const WCHAR *base = app_name, *c;
++
++        for (c = app_name; app_name && *c; c++) if (*c == '\\' || *c == '/') base = c + 1;
++        if (len && len < ARRAY_SIZE(spec) && tidy_cmdline && base && !wcsstr( tidy_cmdline, L"--type=" ))
++        {
++            for (entry = spec; entry && *entry; entry = next)
++            {
++                if ((next = wcschr( entry, '|' ))) *next++ = 0;
++                if (!(eq = wcschr( entry, '=' ))) continue;
++                *eq = 0;
++                if (lstrcmpiW( entry, base )) continue;
++                {
++                    size_t size = lstrlenW( tidy_cmdline ) + lstrlenW( eq + 1 ) + 2;
++                    WCHAR *new_cmdline = RtlAllocateHeap( GetProcessHeap(), 0, size * sizeof(WCHAR) );
++
++                    if (new_cmdline)
++                    {
++                        swprintf( new_cmdline, size, L"%s %s", tidy_cmdline, eq + 1 );
++                        TRACE( "GamingMac: cmdline for %s is now %s\n", debugstr_w(base), debugstr_w(new_cmdline) );
++                        if (tidy_cmdline != cmd_line) HeapFree( GetProcessHeap(), 0, tidy_cmdline );
++                        tidy_cmdline = new_cmdline;
++                    }
++                }
++                break;
++            }
++        }
++    }
++
+     /* Warn if unsupported features are used */
+ 
+     if (flags & (IDLE_PRIORITY_CLASS | HIGH_PRIORITY_CLASS | REALTIME_PRIORITY_CLASS |

@@ -81,3 +81,7 @@ Cuando dejes CrossOver, movemos los juegos a una biblioteca neutral (`~/Games/St
 5. **El wineserver debe arrancar con el mismo `WINEMSYNC`** que el juego; si no, el juego no conecta.
 6. **Sin pantalla activa (Mac bloqueada/dormida) Steam se congela**, también con CrossOver.
    `gmac doctor` y `gmac run` ahora lo advierten.
+7. **UI de Steam negra**: el `steamwebhelper` (Chromium/CEF) necesita, igual que en CrossOver,
+   `--disable-gpu --in-process-gpu --no-sandbox`. Steam no expone `--in-process-gpu`, así que
+   agregamos `GMAC_APPEND_ARGS` (patches/wine/0003) para inyectar argumentos por ejecutable.
+   Con DXMT falla (swapchain entre procesos) y con wined3d/D3DMetal se cae el proceso GPU.

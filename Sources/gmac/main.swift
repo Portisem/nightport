@@ -14,7 +14,7 @@ gmac: lanzador de juegos Windows para macOS (GamingMac)
                     [--hud] [--debug CANALES] [--dry-run]
   gmac steam install <bottle> [--engine E]     Descarga e instala Steam (Windows) en el bottle
   gmac steam link <bottle> [--from Steam]      Enlaza juegos ya descargados en CrossOver (sin duplicar)
-  gmac steam start <bottle> [--engine E]       Abre Steam en el bottle (no espera)
+  gmac steam start <bottle> [--backend B]      Abre Steam en el bottle (no espera; UI con DXMT)
   gmac exec <bottle> [--engine E] -- <args de wine…>
 """
 
@@ -161,11 +161,14 @@ do {
         case "start":
             warnIfDisplayAsleep()
             let engine = try Engine.find(args.options["engine"])
-            let env = Steam.engineEnvironment(engine).merging(["WINEPREFIX": bottle.url.path, "WINEMSYNC": "1", "WINEDEBUG": "-all", "ROSETTA_ADVERTISE_AVX": "1"]) { _, n in n }
-            try Paths.ensure(Paths.logs)
-            let pid = try Shell.spawn(engine.wine, [#"C:\Program Files (x86)\Steam\steam.exe"#], environment: env,
-                                      log: Paths.logs.appendingPathComponent("steam-\(bottle.name).log"))
-            print("Steam iniciado (pid \(pid)). Log: \(Paths.logs.path)/steam-\(bottle.name).log")
+            var overrides = Launcher.Overrides(wineDebug: args.options["debug"])
+            if let b = args.options["backend"] {
+                guard let backend = GraphicsBackend(rawValue: b) else { fail("backend inválido: \(b)") }
+                overrides.backend = backend
+            }
+            let plan = try Launcher.plan(profile: try ProfileStore.resolved("steam-client"), engine: engine, bottle: bottle, overrides: overrides)
+            let pid = try Launcher.spawn(plan)
+            print("Steam iniciado (pid \(pid), traductor \(plan.backend.rawValue)). Log: \(plan.logFile.path)")
         default:
             fail("uso: gmac steam install|link|start <bottle>")
         }

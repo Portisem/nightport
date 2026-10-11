@@ -1,0 +1,24 @@
+{
+  "id": "steam-client",
+  "name": "Steam (cliente)",
+  "status": "probando",
+  "api": "CEF/Chromium → ANGLE → DX11",
+  "launch": {
+    "mode": "exe",
+    "exe": "C:\\Program Files (x86)\\Steam\\steam.exe"
+  },
+  "graphics": {
+    "backend": "wined3d",
+    "candidates": [
+      "wined3d",
+      "dxmt",
+      "d3dmetal"
+    ]
+  },
+  "notes": [
+    "UI de Steam (CEF) igual que CrossOver: --disable-gpu --in-process-gpu --no-sandbox, inyectados con GMAC_APPEND_ARGS (patches/wine/0003). DXMT falla con swapchains entre procesos."
+  ],
+  "env": {
+    "GMAC_APPEND_ARGS": "steamwebhelper.exe=--disable-gpu --in-process-gpu --no-sandbox"
+  }
+}

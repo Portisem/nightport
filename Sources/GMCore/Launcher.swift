@@ -134,6 +134,18 @@ public enum Launcher {
     }
 
     public static func execute(_ plan: LaunchPlan) throws -> Int32 {
+        try prepare(plan)
+        return try Shell.run(plan.engine.wine, plan.arguments, environment: plan.environment, log: plan.logFile)
+    }
+
+    /// Lanza sin esperar (p. ej. Steam). Devuelve el pid.
+    public static func spawn(_ plan: LaunchPlan) throws -> Int32 {
+        try prepare(plan)
+        return try Shell.spawn(plan.engine.wine, plan.arguments, environment: plan.environment, log: plan.logFile)
+    }
+
+    /// Copia DLLs, escribe la cabecera del log y corre los pasos previos.
+    static func prepare(_ plan: LaunchPlan) throws {
         try Paths.ensure(Paths.logs)
         let fm = FileManager.default
         for (from, to) in plan.dllCopies {
@@ -153,6 +165,5 @@ public enum Launcher {
         for step in plan.preSteps {
             try Shell.run(plan.engine.wine, step, environment: baseEnv, log: plan.logFile)
         }
-        return try Shell.run(plan.engine.wine, plan.arguments, environment: plan.environment, log: plan.logFile)
     }
 }
