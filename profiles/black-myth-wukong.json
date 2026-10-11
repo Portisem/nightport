@@ -6,7 +6,7 @@
   "api": "DX12 (UE5, 64-bit)",
   "launch": {
     "mode": "exe",
-    "exe": "BlackMythWukong\\b1\\Binaries\\Win64\\b1-Win64-Shipping.exe"
+    "exe": "BlackMythWukong\\b1.exe"
   },
   "graphics": {
     "backend": "d3dmetal",

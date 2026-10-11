@@ -12,6 +12,8 @@ public struct LaunchPlan {
     public var preSteps: [[String]]
     /// DLLs del traductor a copiar al prefix (solo motores "upstream").
     public var dllCopies: [(from: URL, to: URL)]
+    /// Archivos de texto a crear si faltan (p. ej. steam_appid.txt).
+    public var extraFiles: [(url: URL, contents: String)] = []
     public var logFile: URL
 }
 
@@ -35,6 +37,8 @@ public enum Launcher {
 
         // 1. Qué ejecutar
         var args: [String]
+        var extraFiles: [(url: URL, contents: String)] = []
+        var steamEnv: [String: String] = [:]
         let launch = profile.launch ?? .init(mode: .steam, exe: nil, args: nil)
         switch launch.mode {
         case .steam:
@@ -43,6 +47,17 @@ public enum Launcher {
         case .exe:
             guard let exe = launch.exe else { throw GMError("El perfil \(profile.id) no define launch.exe") }
             args = [exe.contains(":\\") ? exe : steamCommon + exe]
+            // steam_appid.txt junto al ejecutable: el juego se conecta al Steam abierto en vez de
+            // relanzarse por Steam (que usaría el entorno de Steam y su opción de arranque por defecto).
+            if let appId = profile.steamAppId {
+                // Lo mismo que hace Steam al lanzar un juego: así no pide relanzarse por steam://run
+                steamEnv = ["SteamAppId": "\(appId)", "SteamGameId": "\(appId)", "SteamOverlayGameId": "\(appId)"]
+            }
+            if let appId = profile.steamAppId, !exe.contains(":\\") {
+                let unixExe = bottle.steamDirectory.appendingPathComponent("steamapps/common")
+                    .appendingPathComponent(exe.replacingOccurrences(of: "\\", with: "/"))
+                extraFiles.append((unixExe.deletingLastPathComponent().appendingPathComponent("steam_appid.txt"), "\(appId)"))
+            }
         }
         args += launch.args ?? []
 
@@ -53,6 +68,7 @@ public enum Launcher {
             // Fix de CrossOver para apps .NET 7/8 bajo Rosetta
             "DOTNET_EnableWriteXorExecute": "0",
         ]
+        env.merge(steamEnv) { _, new in new }
         switch profile.sync ?? .msync {
         case .msync: env["WINEMSYNC"] = "1"
         case .esync: env["WINEESYNC"] = "1"
@@ -130,7 +146,8 @@ public enum Launcher {
         let stamp = ISO8601DateFormatter().string(from: Date()).replacingOccurrences(of: ":", with: "-")
         let log = Paths.logs.appendingPathComponent("\(profile.id)-\(backend.rawValue)-\(stamp).log")
         return LaunchPlan(engine: engine, bottle: bottle, profile: profile, backend: backend,
-                          arguments: args, environment: env, preSteps: pre, dllCopies: dllCopies, logFile: log)
+                          arguments: args, environment: env, preSteps: pre, dllCopies: dllCopies,
+                          extraFiles: extraFiles, logFile: log)
     }
 
     public static func execute(_ plan: LaunchPlan) throws -> Int32 {
@@ -148,6 +165,9 @@ public enum Launcher {
     static func prepare(_ plan: LaunchPlan) throws {
         try Paths.ensure(Paths.logs)
         let fm = FileManager.default
+        for file in plan.extraFiles where !fm.fileExists(atPath: file.url.path) {
+            try file.contents.write(to: file.url, atomically: true, encoding: .utf8)
+        }
         for (from, to) in plan.dllCopies {
             if fm.contentsEqual(atPath: from.path, andPath: to.path) { continue }
             if fm.fileExists(atPath: to.path) {
