@@ -4,9 +4,20 @@
   "steamAppId": 3266090,
   "status": "smoke-test",
   "api": "DX11 (Unity, 64-bit)",
-  "launch": { "mode": "steam" },
-  "graphics": { "backend": "dxmt", "candidates": ["dxmt", "d3dmetal", "dxvk"] },
+  "launch": {
+    "mode": "exe",
+    "exe": "IT Specialist Simulator\\IT Specialist Simulator.exe"
+  },
+  "graphics": {
+    "backend": "dxmt",
+    "candidates": [
+      "dxmt",
+      "d3dmetal",
+      "dxvk"
+    ]
+  },
   "notes": [
-    "Juego ligero (2.5 GB) para validar el motor de punta a punta antes de los pesados."
+    "Juego ligero (2.5 GB) para validar el motor de punta a punta antes de los pesados.",
+    "Se lanza el ejecutable directo (no el botón Play de Steam) para que use el traductor de su perfil; Steam debe estar abierto."
   ]
 }

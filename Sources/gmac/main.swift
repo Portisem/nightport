@@ -166,9 +166,8 @@ do {
                 guard let backend = GraphicsBackend(rawValue: b) else { fail("backend inválido: \(b)") }
                 overrides.backend = backend
             }
-            let plan = try Launcher.plan(profile: try ProfileStore.resolved("steam-client"), engine: engine, bottle: bottle, overrides: overrides)
-            let pid = try Launcher.spawn(plan)
-            print("Steam iniciado (pid \(pid), traductor \(plan.backend.rawValue)). Log: \(plan.logFile.path)")
+            let plan = try Steam.start(bottle: bottle, engine: engine, overrides: overrides)
+            print("Steam iniciado (traductor \(plan.backend.rawValue)). Log: \(plan.logFile.path)")
         default:
             fail("uso: gmac steam install|link|start <bottle>")
         }

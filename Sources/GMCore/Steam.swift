@@ -55,6 +55,19 @@ public enum Steam {
         return linked
     }
 
+    /// Abre el cliente de Steam con el perfil steam-client (UI de CEF configurada como CrossOver).
+    @discardableResult
+    public static func start(bottle: Bottle, engine: Engine, overrides: Launcher.Overrides = .init()) throws -> LaunchPlan {
+        let plan = try Launcher.plan(profile: try ProfileStore.resolved("steam-client"), engine: engine, bottle: bottle, overrides: overrides)
+        _ = try Launcher.spawn(plan)
+        return plan
+    }
+
+    /// ¿Hay un steam.exe corriendo (en cualquier bottle)?
+    public static var isRunning: Bool {
+        (Shell.output("/usr/bin/pgrep", ["-f", #"Steam\\steam\.exe"#]) ?? "").isEmpty == false
+    }
+
     /// Variables que el motor necesita para encontrar sus dylibs (también fuera de un juego).
     public static func engineEnvironment(_ engine: Engine) -> [String: String] {
         guard engine.isCrossOverFlavor else { return [:] }

@@ -15,6 +15,11 @@ public enum Paths {
         if let custom = ProcessInfo.processInfo.environment["GMAC_PROFILES"] {
             return URL(fileURLWithPath: custom)
         }
+        // Dentro de GamingMac.app los perfiles van en Contents/Resources/profiles
+        if let res = Bundle.main.resourceURL?.appendingPathComponent("profiles"),
+           fm.fileExists(atPath: res.appendingPathComponent("_defaults.json").path) {
+            return res
+        }
         let starts = [
             URL(fileURLWithPath: fm.currentDirectoryPath),
             URL(fileURLWithPath: CommandLine.arguments[0]).resolvingSymlinksInPath().deletingLastPathComponent(),
