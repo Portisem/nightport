@@ -1,0 +1,341 @@
+diff -ruN a/dlls/ntdll/unix/debug.c b/dlls/ntdll/unix/debug.c
+--- a/dlls/ntdll/unix/debug.c	2026-10-10 17:58:14
++++ b/dlls/ntdll/unix/debug.c	2026-10-10 17:58:14
+@@ -388,6 +388,7 @@
+  */
+ NTSTATUS WINAPI NtSetDebugFilterState( ULONG component_id, ULONG level, BOOLEAN state )
+ {
++    state = gm_bool( state );  /* GamingMac */
+     FIXME( "component_id %#x, level %u, state %#x stub.\n", component_id, level, state );
+ 
+     return STATUS_SUCCESS;
+diff -ruN a/dlls/ntdll/unix/env.c b/dlls/ntdll/unix/env.c
+--- a/dlls/ntdll/unix/env.c	2026-10-10 17:58:14
++++ b/dlls/ntdll/unix/env.c	2026-10-10 17:58:14
+@@ -2264,6 +2264,7 @@
+  */
+ NTSTATUS WINAPI NtQueryDefaultLocale( BOOLEAN user, LCID *lcid )
+ {
++    user = gm_bool( user );  /* GamingMac */
+     *lcid = user ? user_lcid : system_lcid;
+     return STATUS_SUCCESS;
+ }
+@@ -2274,6 +2275,7 @@
+  */
+ NTSTATUS WINAPI NtSetDefaultLocale( BOOLEAN user, LCID lcid )
+ {
++    user = gm_bool( user );  /* GamingMac */
+     if (user) user_lcid = lcid;
+     else system_lcid = lcid;
+     return STATUS_SUCCESS;
+diff -ruN a/dlls/ntdll/unix/file.c b/dlls/ntdll/unix/file.c
+--- a/dlls/ntdll/unix/file.c	2026-10-10 17:58:14
++++ b/dlls/ntdll/unix/file.c	2026-10-10 17:58:14
+@@ -2858,6 +2858,8 @@
+                                       FILE_INFORMATION_CLASS info_class, BOOLEAN single_entry,
+                                       UNICODE_STRING *mask, BOOLEAN restart_scan )
+ {
++    single_entry = gm_bool( single_entry );  /* GamingMac */
++    restart_scan = gm_bool( restart_scan );  /* GamingMac */
+     int cwd, fd, needs_close;
+     enum server_fd_type type;
+     struct dir_data *data;
+@@ -6944,6 +6946,8 @@
+                             IO_STATUS_BLOCK *io_status, LARGE_INTEGER *offset,
+                             LARGE_INTEGER *count, ULONG *key, BOOLEAN dont_wait, BOOLEAN exclusive )
+ {
++    dont_wait = gm_bool( dont_wait );  /* GamingMac */
++    exclusive = gm_bool( exclusive );  /* GamingMac */
+     static int warn;
+     unsigned int ret;
+     HANDLE handle;
+@@ -7116,6 +7120,7 @@
+                                              void *apc_context, IO_STATUS_BLOCK *iosb, void *buffer,
+                                              ULONG buffer_size, ULONG filter, BOOLEAN subtree )
+ {
++    subtree = gm_bool( subtree );  /* GamingMac */
+     struct async_fileio_read_changes *fileio;
+     unsigned int status;
+     ULONG size = max( 4096, buffer_size );
+@@ -7622,6 +7627,8 @@
+                                BOOLEAN single_entry, void *list, ULONG list_len,
+                                ULONG *index, BOOLEAN restart )
+ {
++    single_entry = gm_bool( single_entry );  /* GamingMac */
++    restart = gm_bool( restart );  /* GamingMac */
+     int fd, needs_close;
+     NTSTATUS status;
+ 
+diff -ruN a/dlls/ntdll/unix/registry.c b/dlls/ntdll/unix/registry.c
+--- a/dlls/ntdll/unix/registry.c	2026-10-10 17:58:14
++++ b/dlls/ntdll/unix/registry.c	2026-10-10 17:58:14
+@@ -625,6 +625,8 @@
+                                             IO_STATUS_BLOCK *io, ULONG filter, BOOLEAN subtree,
+                                             void *buffer, ULONG length, BOOLEAN async )
+ {
++    subtree = gm_bool( subtree );  /* GamingMac */
++    async = gm_bool( async );  /* GamingMac */
+     unsigned int ret;
+ 
+     TRACE( "(%p,%u,%p,%p,%p,%p,%p,0x%08x, 0x%08x,%p,0x%08x,0x%08x)\n",
+@@ -668,6 +670,8 @@
+                                    IO_STATUS_BLOCK *io, ULONG filter, BOOLEAN subtree,
+                                    void *buffer, ULONG length, BOOLEAN async )
+ {
++    subtree = gm_bool( subtree );  /* GamingMac */
++    async = gm_bool( async );  /* GamingMac */
+     return NtNotifyChangeMultipleKeys( key, 0, NULL, event, apc, apc_context,
+                                        io, filter, subtree, buffer, length, async );
+ }
+diff -ruN a/dlls/ntdll/unix/security.c b/dlls/ntdll/unix/security.c
+--- a/dlls/ntdll/unix/security.c	2026-10-10 17:58:14
++++ b/dlls/ntdll/unix/security.c	2026-10-10 17:58:14
+@@ -186,6 +186,7 @@
+  */
+ NTSTATUS WINAPI NtOpenThreadToken( HANDLE thread, DWORD access, BOOLEAN self, HANDLE *handle )
+ {
++    self = gm_bool( self );  /* GamingMac */
+     return NtOpenThreadTokenEx( thread, access, self, 0, handle );
+ }
+ 
+@@ -196,6 +197,7 @@
+ NTSTATUS WINAPI NtOpenThreadTokenEx( HANDLE thread, DWORD access, BOOLEAN self, DWORD attributes,
+                                      HANDLE *handle )
+ {
++    self = gm_bool( self );  /* GamingMac */
+     unsigned int ret;
+ 
+     TRACE( "(%p,0x%08x,%u,0x%08x,%p)\n", thread, access, self, attributes, handle );
+@@ -223,6 +225,7 @@
+ NTSTATUS WINAPI NtDuplicateToken( HANDLE token, ACCESS_MASK access, OBJECT_ATTRIBUTES *attr,
+                                   BOOLEAN effective_only, TOKEN_TYPE type, HANDLE *handle )
+ {
++    effective_only = gm_bool( effective_only );  /* GamingMac */
+     SECURITY_IMPERSONATION_LEVEL level = SecurityAnonymous;
+     unsigned int status;
+     data_size_t len;
+@@ -751,6 +754,7 @@
+ NTSTATUS WINAPI NtAdjustGroupsToken( HANDLE token, BOOLEAN reset, TOKEN_GROUPS *groups,
+                                      ULONG length, TOKEN_GROUPS *prev, ULONG *retlen )
+ {
++    reset = gm_bool( reset );  /* GamingMac */
+     FIXME( "%p %d %p %u %p %p\n", token, reset, groups, length, prev, retlen );
+     return STATUS_NOT_IMPLEMENTED;
+ }
+@@ -762,6 +766,7 @@
+ NTSTATUS WINAPI NtAdjustPrivilegesToken( HANDLE token, BOOLEAN disable, TOKEN_PRIVILEGES *privs,
+                                          DWORD length, TOKEN_PRIVILEGES *prev, DWORD *retlen )
+ {
++    disable = gm_bool( disable );  /* GamingMac */
+     unsigned int ret;
+ 
+     TRACE( "(%p,0x%08x,%p,0x%08x,%p,%p)\n", token, disable, privs, length, prev, retlen );
+@@ -947,6 +952,7 @@
+                                             ACCESS_MASK *access_granted, NTSTATUS *access_status,
+                                             BOOLEAN *onclose )
+ {
++    creation = gm_bool( creation );  /* GamingMac */
+     FIXME( "(%s, %p, %s, %p, 0x%08x, %p, %d, %p, %p, %p), stub\n",
+            debugstr_us(subsystem), handle, debugstr_us(typename), descr, access,
+            mapping, creation, access_granted, access_status, onclose );
+@@ -966,6 +972,7 @@
+                                                   ACCESS_MASK *access_granted, NTSTATUS *access_status,
+                                                   BOOLEAN *onclose )
+ {
++    creation = gm_bool( creation );  /* GamingMac */
+     FIXME( "(%s, %p, %s, %s, %p, 0x%08x, %u, %x, %p, %u, %p, %d, %p, %p, %p), stub\n",
+            debugstr_us(subsystem), handle, debugstr_us(typename), debugstr_us(objectname),
+            descr, access, audit_type, flags, obj_list, list_len,
+@@ -979,6 +986,7 @@
+  */
+ NTSTATUS WINAPI NtCloseObjectAuditAlarm( UNICODE_STRING *subsystem, HANDLE handle, BOOLEAN onclose )
+ {
++    onclose = gm_bool( onclose );  /* GamingMac */
+     FIXME( "%s %p %u: stub\n", debugstr_us(subsystem), handle, onclose );
+     return STATUS_NOT_IMPLEMENTED;
+ }
+diff -ruN a/dlls/ntdll/unix/server.c b/dlls/ntdll/unix/server.c
+--- a/dlls/ntdll/unix/server.c	2026-10-10 17:58:14
++++ b/dlls/ntdll/unix/server.c	2026-10-10 17:58:14
+@@ -838,6 +838,7 @@
+  */
+ NTSTATUS WINAPI NtContinue( CONTEXT *context, BOOLEAN alertable )
+ {
++    alertable = gm_bool( alertable );  /* GamingMac */
+     return NtContinueEx( context, ULongToPtr(alertable) );
+ }
+ 
+diff -ruN a/dlls/ntdll/unix/sync.c b/dlls/ntdll/unix/sync.c
+--- a/dlls/ntdll/unix/sync.c	2026-10-10 17:58:14
++++ b/dlls/ntdll/unix/sync.c	2026-10-10 17:58:14
+@@ -1184,6 +1184,7 @@
+ NTSTATUS WINAPI GPT_IMPORT(NtCreateEvent)( HANDLE *handle, ACCESS_MASK access, const OBJECT_ATTRIBUTES *attr,
+                                            EVENT_TYPE type, BOOLEAN state )
+ {
++    state = gm_bool( state );  /* GamingMac */
+     unsigned int ret;
+     data_size_t len;
+     struct object_attributes *objattr;
+@@ -1434,6 +1435,7 @@
+ NTSTATUS WINAPI NtCreateMutant( HANDLE *handle, ACCESS_MASK access, const OBJECT_ATTRIBUTES *attr,
+                                 BOOLEAN owned )
+ {
++    owned = gm_bool( owned );  /* GamingMac */
+     unsigned int ret;
+     data_size_t len;
+     struct object_attributes *objattr;
+@@ -1975,6 +1977,7 @@
+ NTSTATUS WINAPI NtWaitForDebugEvent( HANDLE handle, BOOLEAN alertable, LARGE_INTEGER *timeout,
+                                      DBGUI_WAIT_STATE_CHANGE *state )
+ {
++    alertable = gm_bool( alertable );  /* GamingMac */
+     union debug_event_data data;
+     unsigned int ret;
+     BOOL wait = TRUE;
+@@ -2080,6 +2083,8 @@
+                                         ULONG size, BOOLEAN single_entry, BOOLEAN restart,
+                                         ULONG *context, ULONG *ret_size )
+ {
++    single_entry = gm_bool( single_entry );  /* GamingMac */
++    restart = gm_bool( restart );  /* GamingMac */
+     unsigned int status, i, count, total_len, pos, used_size, used_count, strpool_head;
+     ULONG index = restart ? 0 : *context;
+     struct directory_entry *entries;
+@@ -2359,6 +2364,7 @@
+ NTSTATUS WINAPI NtSetTimer( HANDLE handle, const LARGE_INTEGER *when, PTIMER_APC_ROUTINE callback,
+                             void *arg, BOOLEAN resume, ULONG period, BOOLEAN *state )
+ {
++    resume = gm_bool( resume );  /* GamingMac */
+     unsigned int ret = STATUS_SUCCESS;
+ 
+     TRACE( "(%p,%p,%p,%p,%08x,0x%08x,%p)\n", handle, when, callback, arg, resume, period, state );
+@@ -2456,6 +2462,7 @@
+ NTSTATUS WINAPI NtWaitForMultipleObjects( DWORD count, const HANDLE *handles, WAIT_TYPE type,
+                                           BOOLEAN alertable, const LARGE_INTEGER *timeout )
+ {
++    alertable = gm_bool( alertable );  /* GamingMac */
+     union select_op select_op;
+     UINT i, flags = SELECT_INTERRUPTIBLE;
+     unsigned int ret;
+@@ -2496,6 +2503,7 @@
+  */
+ NTSTATUS WINAPI NtWaitForSingleObject( HANDLE handle, BOOLEAN alertable, const LARGE_INTEGER *timeout )
+ {
++    alertable = gm_bool( alertable );  /* GamingMac */
+     union select_op select_op;
+     UINT flags = SELECT_INTERRUPTIBLE;
+     unsigned int ret;
+@@ -2523,6 +2531,7 @@
+ NTSTATUS WINAPI NtSignalAndWaitForSingleObject( HANDLE signal, HANDLE wait,
+                                                 BOOLEAN alertable, const LARGE_INTEGER *timeout )
+ {
++    alertable = gm_bool( alertable );  /* GamingMac */
+     union select_op select_op;
+     UINT flags = SELECT_INTERRUPTIBLE;
+     NTSTATUS ret;
+@@ -2571,6 +2580,7 @@
+  */
+ NTSTATUS WINAPI NtDelayExecution( BOOLEAN alertable, const LARGE_INTEGER *timeout )
+ {
++    alertable = gm_bool( alertable );  /* GamingMac */
+     unsigned int status = STATUS_SUCCESS;
+ 
+     /* if alertable, we need to query the server */
+@@ -2701,6 +2711,7 @@
+  */
+ NTSTATUS WINAPI NtSetTimerResolution( ULONG res, BOOLEAN set, ULONG *current_res )
+ {
++    set = gm_bool( set );  /* GamingMac */
+     static BOOL has_request = FALSE;
+ 
+     TRACE( "(%u,%u,%p), semi-stub!\n", res, set, current_res );
+@@ -2828,6 +2839,7 @@
+ NTSTATUS WINAPI NtWaitForKeyedEvent( HANDLE handle, const void *key,
+                                      BOOLEAN alertable, const LARGE_INTEGER *timeout )
+ {
++    alertable = gm_bool( alertable );  /* GamingMac */
+     union select_op select_op;
+     UINT flags = SELECT_INTERRUPTIBLE;
+ 
+@@ -2849,6 +2861,7 @@
+ NTSTATUS WINAPI NtReleaseKeyedEvent( HANDLE handle, const void *key,
+                                      BOOLEAN alertable, const LARGE_INTEGER *timeout )
+ {
++    alertable = gm_bool( alertable );  /* GamingMac */
+     union select_op select_op;
+     UINT flags = SELECT_INTERRUPTIBLE;
+ 
+@@ -3024,6 +3037,7 @@
+ NTSTATUS WINAPI NtRemoveIoCompletionEx( HANDLE handle, FILE_IO_COMPLETION_INFORMATION *info, ULONG count,
+                                         ULONG *written, LARGE_INTEGER *timeout, BOOLEAN alertable )
+ {
++    alertable = gm_bool( alertable );  /* GamingMac */
+     HANDLE wait_handle = NULL;
+     unsigned int status;
+     ULONG i = 0;
+@@ -3268,6 +3282,7 @@
+ NTSTATUS WINAPI NtAcceptConnectPort( HANDLE *handle, ULONG id, LPC_MESSAGE *msg, BOOLEAN accept,
+                                      LPC_SECTION_WRITE *write, LPC_SECTION_READ *read )
+ {
++    accept = gm_bool( accept );  /* GamingMac */
+     FIXME("(%p,%u,%p,%d,%p,%p),stub!\n", handle, id, msg, accept, write, read );
+     return STATUS_NOT_IMPLEMENTED;
+ }
+@@ -3843,6 +3858,7 @@
+  */
+ NTSTATUS WINAPI NtCommitTransaction( HANDLE transaction, BOOLEAN wait )
+ {
++    wait = gm_bool( wait );  /* GamingMac */
+     FIXME( "%p, %d stub.\n", transaction, wait );
+ 
+     return STATUS_SUCCESS;
+@@ -3853,6 +3869,7 @@
+  */
+ NTSTATUS WINAPI NtRollbackTransaction( HANDLE transaction, BOOLEAN wait )
+ {
++    wait = gm_bool( wait );  /* GamingMac */
+     FIXME( "%p, %d stub.\n", transaction, wait );
+ 
+     return STATUS_ACCESS_VIOLATION;
+diff -ruN a/dlls/ntdll/unix/system.c b/dlls/ntdll/unix/system.c
+--- a/dlls/ntdll/unix/system.c	2026-10-10 17:58:14
++++ b/dlls/ntdll/unix/system.c	2026-10-10 17:58:14
+@@ -4688,6 +4688,7 @@
+ NTSTATUS WINAPI NtInitiatePowerAction( POWER_ACTION action, SYSTEM_POWER_STATE state,
+                                        ULONG flags, BOOLEAN async )
+ {
++    async = gm_bool( async );  /* GamingMac */
+     FIXME( "(%d,%d,0x%08x,%d),stub\n", action, state, flags, async );
+     return STATUS_NOT_IMPLEMENTED;
+ }
+diff -ruN a/dlls/ntdll/unix/thread.c b/dlls/ntdll/unix/thread.c
+--- a/dlls/ntdll/unix/thread.c	2026-10-10 17:58:14
++++ b/dlls/ntdll/unix/thread.c	2026-10-10 17:58:14
+@@ -1327,6 +1327,7 @@
+                                 HANDLE process, CLIENT_ID *id, CONTEXT *ctx, INITIAL_TEB *teb,
+                                 BOOLEAN suspended )
+ {
++    suspended = gm_bool( suspended );  /* GamingMac */
+     FIXME( "%p %d %p %p %p %p %p %d, stub!\n",
+            handle, access, attr, process, id, ctx, teb, suspended );
+     return STATUS_NOT_IMPLEMENTED;
+diff -ruN a/dlls/ntdll/unix/unix_private.h b/dlls/ntdll/unix/unix_private.h
+--- a/dlls/ntdll/unix/unix_private.h	2026-10-10 17:58:14
++++ b/dlls/ntdll/unix/unix_private.h	2026-10-10 17:58:14
+@@ -733,4 +733,16 @@
+ 
+ #endif  /* defined(__i386__) || defined(__x86_64__) */
+ 
++
++/* GamingMac: Apple clang assumes narrow (BOOLEAN) arguments arrive zero-extended to 32 bits
++ * (Darwin x86-64 convention), but Windows callers only set the low byte; e.g. Steam passes
++ * restart=FALSE to NtQueryDirectoryObject with garbage in the upper bits, which clang then
++ * reads as TRUE and loops forever. The empty asm hides the value so the mask is really applied. */
++static inline BOOLEAN gm_bool( BOOLEAN b )
++{
++    unsigned int v = b;
++    __asm__ __volatile__( "" : "+r" (v) );
++    return (v & 0xff) != 0;
++}
++
+ #endif /* __NTDLL_UNIX_PRIVATE_H */

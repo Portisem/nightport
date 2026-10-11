@@ -50,3 +50,34 @@ En lugar de volver a descargar, el bottle nuevo apunta a las carpetas existentes
 
 Las partidas guardadas viven en cada bottle (`AppData`); se pueden copiar o enlazar después.
 Cuando dejes CrossOver, movemos los juegos a una biblioteca neutral (`~/Games/SteamLibrary`).
+
+## Estado (2026-10-10)
+
+✅ Motor `cx26` compilado e instalado (`scripts/build-engine.sh all && scripts/assemble-engine.sh`).
+✅ Bottle `Steam` creado, Steam instalado y actualizado, juegos de CrossOver enlazados.
+✅ Traductores validados con `gmtest` (prueba propia, `tools/gmtest`):
+
+| Prueba | Traductor | Adaptador que ve el juego | Resultado |
+|---|---|---|---|
+| DX11 | DXMT 0.80 | Apple M5 Pro (FL 11_0) | ✅ 120 FPS (tope ProMotion) |
+| DX11 | D3DMetal 3.0 | AMD Compatibility Mode | ✅ 120 FPS |
+| DX11 | wined3d (OpenGL) | NVIDIA GeForce 8800 GTX (falso) | ✅ sin vsync |
+| DX12 | D3DMetal 3.0 | AMD Compatibility Mode, DXR tier 1.1 | ✅ 120 FPS |
+
+⏳ Iniciar sesión en Steam y probar juegos: requiere la sesión de macOS **desbloqueada**.
+
+## Hallazgos
+
+1. **El selector de traductor de CrossOver es propietario** (`cxcompatdb.so` llama a `prepend_dll_path`).
+   Lo reemplazamos con `WINEDLLPATH_PRIORITY` (patches/wine/0001).
+2. **Bug de ABI de clang en macOS (patches/wine/0002)**: Apple clang asume que los parámetros
+   `BOOLEAN` llegan extendidos a 32 bits; los programas de Windows solo escriben el byte bajo.
+   Steam pasaba `restart=FALSE` a `NtQueryDirectoryObject` con basura arriba → Wine lo leía como
+   `TRUE` → ciclo infinito (6 M llamadas en 25 s, wineserver al 60 % CPU). CrossOver tiene el mismo
+   código; le afecta solo según qué basura quede en la pila. Corregido en 36 syscalls con `gm_bool()`.
+3. **winemetal (DXMT)** debe vivir junto a Wine (`lib/wine/*`) y copiarse a `system32`/`syswow64`
+   del bottle; `d3d11/dxgi/d3d10core` van en `lib/dxmt` para elegirlos por juego.
+4. **Wine Mono/Gecko** deben venir en el motor; si no, `wineboot` abre un diálogo y se queda esperando.
+5. **El wineserver debe arrancar con el mismo `WINEMSYNC`** que el juego; si no, el juego no conecta.
+6. **Sin pantalla activa (Mac bloqueada/dormida) Steam se congela**, también con CrossOver.
+   `gmac doctor` y `gmac run` ahora lo advierten.

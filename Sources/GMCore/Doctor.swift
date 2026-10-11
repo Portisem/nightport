@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 
 /// Revisión del sistema: qué tenemos listo y qué falta para jugar.
 public enum Doctor {
@@ -7,6 +8,9 @@ public enum Doctor {
         public let title: String
         public let detail: String
     }
+
+    /// Sin pantalla activa (Mac bloqueada o en reposo) no llega vsync: la UI de Steam (CEF) y los juegos se congelan.
+    public static var displayAsleep: Bool { CGDisplayIsAsleep(CGMainDisplayID()) != 0 }
 
     public static func run() -> [Check] {
         var checks: [Check] = []
@@ -47,8 +51,10 @@ public enum Doctor {
         let cxBottles = (try? fm.contentsOfDirectory(atPath: Paths.crossOverBottles.path)) ?? []
         checks.append(Check(ok: nil, title: "Bottles CrossOver (referencia)", detail: cxBottles.isEmpty ? "ninguno" : cxBottles.joined(separator: ", ")))
 
-        let brew86 = fm.isExecutableFile(atPath: "/usr/local/bin/brew")
-        checks.append(Check(ok: nil, title: "Homebrew x86_64 (para compilar Wine)", detail: brew86 ? "instalado" : "no instalado"))
+        let asleep = displayAsleep
+        checks.append(Check(ok: !asleep, title: "Pantalla / sesión",
+                            detail: asleep ? "pantalla dormida o sesión bloqueada: Steam y los juegos se congelan sin pantalla activa"
+                                           : "activa"))
 
         return checks
     }

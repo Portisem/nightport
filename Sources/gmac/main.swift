@@ -67,6 +67,12 @@ func bottleForRun(_ name: String?) throws -> Bottle {
 }
 
 let args = Args(Array(CommandLine.arguments.dropFirst()))
+
+func warnIfDisplayAsleep() {
+    if Doctor.displayAsleep {
+        print("⚠️  La pantalla está dormida o la sesión bloqueada: Steam y los juegos se congelan hasta que la desbloquees.")
+    }
+}
 guard let command = args.positional.first else { print(usage); exit(0) }
 
 do {
@@ -136,6 +142,7 @@ do {
             print("\n" + Shell.describe(engine.wine, plan.arguments, environment: plan.environment))
             exit(0)
         }
+        warnIfDisplayAsleep()
         print("  log: \(plan.logFile.path)")
         let code = try Launcher.execute(plan)
         print("Terminó con código \(code)")
@@ -152,6 +159,7 @@ do {
             print("Enlazados \(linked.count) juegos:")
             linked.forEach { print("  • \($0)") }
         case "start":
+            warnIfDisplayAsleep()
             let engine = try Engine.find(args.options["engine"])
             let env = Steam.engineEnvironment(engine).merging(["WINEPREFIX": bottle.url.path, "WINEMSYNC": "1", "WINEDEBUG": "-all", "ROSETTA_ADVERTISE_AVX": "1"]) { _, n in n }
             try Paths.ensure(Paths.logs)
