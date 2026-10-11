@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nightport · Ajustes del juego</title>
+<style>
+@font-face{font-family:'Unbounded';font-weight:500;src:url('../fonts/Unbounded-Medium.ttf') format('truetype')}
+@font-face{font-family:'Unbounded';font-weight:600;src:url('../fonts/Unbounded-SemiBold.ttf') format('truetype')}
+@font-face{font-family:'Unbounded';font-weight:700;src:url('../fonts/Unbounded-Bold.ttf') format('truetype')}
+@font-face{font-family:'Manrope';font-weight:400;src:url('../fonts/Manrope-Regular.ttf') format('truetype')}
+@font-face{font-family:'Manrope';font-weight:500;src:url('../fonts/Manrope-Medium.ttf') format('truetype')}
+@font-face{font-family:'Manrope';font-weight:600;src:url('../fonts/Manrope-SemiBold.ttf') format('truetype')}
+@font-face{font-family:'Manrope';font-weight:700;src:url('../fonts/Manrope-Bold.ttf') format('truetype')}
+@font-face{font-family:'Manrope';font-weight:800;src:url('../fonts/Manrope-ExtraBold.ttf') format('truetype')}
+@font-face{font-family:'JetBrains Mono';font-weight:400;src:url('../fonts/JetBrainsMono-Regular.ttf') format('truetype')}
+@font-face{font-family:'JetBrains Mono';font-weight:500;src:url('../fonts/JetBrainsMono-Medium.ttf') format('truetype')}
+body{margin:0;background:#0B0D1A}
+a{color:#A99FFF}a:hover{color:#EEF0FF}
+</style>
+</head>
+<body>
+<div style="min-height: 960px; background: #0B0D1A; color: #EEF0FF; font-family: 'Manrope', sans-serif; display: flex; flex-wrap: wrap">
+
+  <nav aria-label="Principal" style="flex: 1 1 232px; max-width: 100%; background: #151833; border-right: 1px solid #24284A; padding: 24px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 28px">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+      <svg width="30" height="30" viewBox="0 0 120 120" aria-hidden="true"><path d="M30 106 V58 A30 30 0 0 1 90 58 V106" fill="none" stroke="#7C6CFF" stroke-width="12" stroke-linecap="round"></path><circle cx="60" cy="64" r="6" fill="#FF7A45"></circle><circle cx="48" cy="76" r="6" fill="#3DDBD0"></circle><circle cx="72" cy="76" r="6" fill="#3DDBD0"></circle><circle cx="60" cy="88" r="6" fill="#3DDBD0"></circle></svg>
+      <span style="font-family: 'Unbounded', sans-serif; font-weight: 600; font-size: 18px">nightport</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <a href="Biblioteca.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 12px; color: #9AA0C3; text-decoration: none; font-weight: 600; font-size: 15px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect></svg>Biblioteca</a>
+      <a href="AgregarJuego.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 12px; color: #9AA0C3; text-decoration: none; font-weight: 600; font-size: 15px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Agregar juego</a>
+      <a href="#" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 12px; color: #9AA0C3; text-decoration: none; font-weight: 600; font-size: 15px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>Compatibilidad</a>
+      <a href="#" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 12px; color: #9AA0C3; text-decoration: none; font-weight: 600; font-size: 15px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>Descargas</a>
+      <a href="AjustesJuego.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 12px; background: #24284A; color: #EEF0FF; text-decoration: none; font-weight: 700; font-size: 15px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A99FFF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg>Ajustes</a>
+    </div>
+  </nav>
+
+  <main style="flex: 999 1 560px; min-width: 0; padding: 28px 36px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <a href="Biblioteca.dc.html" style="font-size: 14px; font-weight: 600; text-decoration: none">← Biblioteca</a>
+        <h1 style="margin: 0; font-family: 'Unbounded', sans-serif; font-weight: 600; font-size: 28px; letter-spacing: -0.02em">Hollow Tide · Ajustes</h1>
+      </div>
+      <button type="button" style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 24px; border-radius: 14px; border: 0; background: #FF7A45; color: #0B0D1A; font: 800 16px 'Manrope', sans-serif"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"></path></svg>Jugar</button>
+    </div>
+
+    <div role="tablist" aria-label="Secciones de ajustes" style="display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid #24284A">
+      <button type="button" role="tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #9AA0C3; font: 600 15px 'Manrope', sans-serif">General</button>
+      <button type="button" role="tab" aria-selected="true" style="min-height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid #7C6CFF; background: transparent; color: #EEF0FF; font: 800 15px 'Manrope', sans-serif">Gráficos</button>
+      <button type="button" role="tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #9AA0C3; font: 600 15px 'Manrope', sans-serif">Controles</button>
+      <button type="button" role="tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #9AA0C3; font: 600 15px 'Manrope', sans-serif">Avanzado</button>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+      <form style="flex: 999 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px; background: #1B1E3A; border: 1px solid #2A2F57">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3DDBD0" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></svg>
+          <span style="flex: 1; font-size: 14px; line-height: 1.5">Estás usando el <strong>perfil recomendado</strong>. Si cambias algo, siempre puedes volver a él.</span>
+          <button type="button" style="min-height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid #2A2F57; background: transparent; color: #EEF0FF; font: 700 13px 'Manrope', sans-serif">Restaurar</button>
+        </div>
+
+        <section style="background: #151833; border: 1px solid #24284A; border-radius: 20px; padding: 8px 24px">
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #24284A">
+            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 260px">
+              <label for="np-backend" style="font-size: 15px; font-weight: 700">Traducción gráfica</label>
+              <span style="font-size: 13px; color: #9AA0C3">Cómo convertimos los gráficos de Windows para tu Mac.</span>
+            </div>
+            <select id="np-backend" style="min-height: 44px; min-width: 220px; padding: 0 12px; border-radius: 12px; border: 1px solid #2A2F57; background: #1B1E3A; color: #EEF0FF; font: 600 14px 'Manrope', sans-serif">
+              <option>Automático (perfil: DXMT)</option>
+              <option>D3DMetal (DX11/DX12)</option>
+              <option>DXMT (DX10/DX11)</option>
+              <option>DXVK (DX9 a DX11)</option>
+              <option>OpenGL (WineD3D)</option>
+            </select>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #24284A">
+            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 260px">
+              <span id="np-fps-label" style="font-size: 15px; font-weight: 700">Límite de FPS</span>
+              <span style="font-size: 13px; color: #9AA0C3">Un tope estable se siente mejor que FPS altos con caídas.</span>
+            </div>
+            <div role="radiogroup" aria-labelledby="np-fps-label" style="display: flex; gap: 4px; padding: 4px; border-radius: 12px; background: #1B1E3A; border: 1px solid #2A2F57">
+              <button type="button" role="radio" aria-checked="false" style="min-height: 40px; min-width: 52px; border-radius: 9px; border: 0; background: transparent; color: #9AA0C3; font: 600 13px 'JetBrains Mono', monospace">40</button>
+              <button type="button" role="radio" aria-checked="true" style="min-height: 40px; min-width: 52px; border-radius: 9px; border: 0; background: #7C6CFF; color: #0B0D1A; font: 600 13px 'JetBrains Mono', monospace">60</button>
+              <button type="button" role="radio" aria-checked="false" style="min-height: 40px; min-width: 52px; border-radius: 9px; border: 0; background: transparent; color: #9AA0C3; font: 600 13px 'JetBrains Mono', monospace">120</button>
+              <button type="button" role="radio" aria-checked="false" style="min-height: 40px; min-width: 52px; border-radius: 9px; border: 0; background: transparent; color: #9AA0C3; font: 600 13px 'Manrope', sans-serif">Sin tope</button>
+            </div>
+          </div>
+          
+            <div style="display: flex; gap: 16px; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #24284A">
+              <div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 260px">
+                <span style="font-size: 15px; font-weight: 700">DLSS → MetalFX</span>
+                <span style="font-size: 13px; color: #9AA0C3">Si el juego usa DLSS, lo traducimos al escalado de Apple. Solo con D3DMetal.</span>
+              </div>
+              <button type="button" role="switch" aria-checked="true" aria-label="DLSS → MetalFX" style="width: 52px; height: 32px; border-radius: 16px; border: 0; padding: 4px; background: #7C6CFF; display: flex; justify-content: flex-end; cursor: pointer; flex: none">
+                <span style="width: 24px; height: 24px; border-radius: 12px; background: #EEF0FF; display: block"></span>
+              </button>
+            </div>
+          
+            <div style="display: flex; gap: 16px; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #24284A">
+              <div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 260px">
+                <span style="font-size: 15px; font-weight: 700">HUD de Metal</span>
+                <span style="font-size: 13px; color: #9AA0C3">Muestra FPS y tiempo de frame mientras juegas.</span>
+              </div>
+              <button type="button" role="switch" aria-checked="true" aria-label="HUD de Metal" style="width: 52px; height: 32px; border-radius: 16px; border: 0; padding: 4px; background: #7C6CFF; display: flex; justify-content: flex-end; cursor: pointer; flex: none">
+                <span style="width: 24px; height: 24px; border-radius: 12px; background: #EEF0FF; display: block"></span>
+              </button>
+            </div>
+          
+            <div style="display: flex; gap: 16px; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #24284A">
+              <div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 260px">
+                <span style="font-size: 15px; font-weight: 700">Raytracing (DXR)</span>
+                <span style="font-size: 13px; color: #9AA0C3">Expone DirectX Raytracing al juego. Experimental.</span>
+              </div>
+              <button type="button" role="switch" aria-checked="false" aria-label="Raytracing (DXR)" style="width: 52px; height: 32px; border-radius: 16px; border: 0; padding: 4px; background: #2A2F57; display: flex; justify-content: flex-start; cursor: pointer; flex: none">
+                <span style="width: 24px; height: 24px; border-radius: 12px; background: #EEF0FF; display: block"></span>
+              </button>
+            </div>
+          
+            <div style="display: flex; gap: 16px; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 0">
+              <div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 260px">
+                <span style="font-size: 15px; font-weight: 700">Modo Retina</span>
+                <span style="font-size: 13px; color: #9AA0C3">Resolución completa de la pantalla. Más nítido, más exigente.</span>
+              </div>
+              <button type="button" role="switch" aria-checked="false" aria-label="Modo Retina" style="width: 52px; height: 32px; border-radius: 16px; border: 0; padding: 4px; background: #2A2F57; display: flex; justify-content: flex-start; cursor: pointer; flex: none">
+                <span style="width: 24px; height: 24px; border-radius: 12px; background: #EEF0FF; display: block"></span>
+              </button>
+            </div>
+          
+        </section>
+      </form>
+
+      <aside style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+        <section style="background: #151833; border: 1px solid #24284A; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #9AA0C3">Vista previa del HUD</span>
+          <div style="background: #0B0D1A; border-radius: 14px; padding: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; font-family: 'JetBrains Mono', monospace">
+            <div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; color: #9AA0C3">FPS</span><span style="font-size: 26px; color: #3DDBD0">58</span></div>
+            <div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; color: #9AA0C3">FRAME</span><span style="font-size: 26px; color: #EEF0FF">17.2<span style="font-size: 13px"> ms</span></span></div>
+            <div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; color: #9AA0C3">GPU</span><span style="font-size: 18px; color: #EEF0FF">71%</span></div>
+            <div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; color: #9AA0C3">MEMORIA</span><span style="font-size: 18px; color: #EEF0FF">6.1 GB</span></div>
+          </div>
+          <span style="font-size: 12px; color: #9AA0C3">Valores de ejemplo. Se muestra en una esquina mientras juegas.</span>
+        </section>
+        <section style="background: #151833; border: 1px solid #24284A; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; align-items: center; gap: 12px">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#A99FFF" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 9h12a4 4 0 0 1 3.8 5.3l-1 3a2.5 2.5 0 0 1-4.3.7L15 16H9l-1.5 2a2.5 2.5 0 0 1-4.3-.7l-1-3A4 4 0 0 1 6 9z"></path><path d="M8 11.5v3M6.5 13h3"></path><circle cx="16" cy="12.5" r="0.8"></circle><circle cx="17.5" cy="14" r="0.8"></circle></svg>
+            <h2 style="margin: 0; font-size: 16px; font-weight: 800">Control conectado</h2>
+          </div>
+          <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #9AA0C3">[Modelo del control] vía Bluetooth. Botones mapeados al estilo Xbox para este juego.</p>
+          <a href="#" style="font-size: 14px; font-weight: 700">Cambiar mapeo</a>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+</body>
+</html>

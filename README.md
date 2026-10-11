@@ -1,11 +1,21 @@
-# GamingMac
+# Nightport
+
+> Tus juegos de Windows, en casa en tu Mac. (Código interno: GamingMac)
 
 Lanzador personal de juegos de Windows para macOS (Apple Silicon), construido sobre piezas
 abiertas: Wine (fuentes FOSS de CrossOver), DXMT, DXVK y MoltenVK, más D3DMetal de Apple
 (GPTK, lo provee el usuario). Cada juego tiene un **perfil curado** con el traductor gráfico y
 los ajustes que mejor le funcionan, medidos con benchmarks.
 
-## Uso
+## App
+
+```bash
+scripts/build-app.sh   # instala ~/Applications/Nightport.app
+```
+
+Marca, tokens y mockups en `brand/`.
+
+## CLI
 
 ```bash
 swift build

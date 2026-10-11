@@ -24,15 +24,32 @@ public enum Launcher {
     public struct Overrides {
         public var backend: GraphicsBackend?
         public var metalHUD: Bool?
+        public var metalFX: Bool?
+        public var dxr: Bool?
+        public var retina: Bool?
         public var wineDebug: String?
-        public init(backend: GraphicsBackend? = nil, metalHUD: Bool? = nil, wineDebug: String? = nil) {
+        public init(backend: GraphicsBackend? = nil, metalHUD: Bool? = nil, metalFX: Bool? = nil,
+                    dxr: Bool? = nil, retina: Bool? = nil, wineDebug: String? = nil) {
             self.backend = backend
             self.metalHUD = metalHUD
+            self.metalFX = metalFX
+            self.dxr = dxr
+            self.retina = retina
             self.wineDebug = wineDebug
+        }
+
+        /// Desde los ajustes guardados del usuario para un juego.
+        public init(_ user: GameOverrides) {
+            self.init(backend: user.backend, metalHUD: user.metalHUD, metalFX: user.metalFX,
+                      dxr: user.dxr, retina: user.retina)
         }
     }
 
-    public static func plan(profile: GameProfile, engine: Engine, bottle: Bottle, overrides: Overrides = .init()) throws -> LaunchPlan {
+    public static func plan(profile curated: GameProfile, engine: Engine, bottle: Bottle, overrides: Overrides = .init()) throws -> LaunchPlan {
+        var profile = curated
+        if let v = overrides.metalFX { profile.metalFX = v }
+        if let v = overrides.dxr { profile.dxr = v }
+        if let v = overrides.retina { profile.retina = v }
         let backend = overrides.backend ?? profile.graphics?.backend ?? .d3dmetal
 
         // 1. Qué ejecutar

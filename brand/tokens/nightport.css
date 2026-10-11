@@ -1,0 +1,75 @@
+/* Nightport · variables de marca para web (landing, docs, página de descargas).
+   Fuente de verdad: tokens.json. Las rutas de fuentes asumen este archivo en brand/tokens/. */
+
+@font-face { font-family: "Unbounded"; font-weight: 500; font-display: swap; src: url("../fonts/Unbounded-Medium.ttf") format("truetype"); }
+@font-face { font-family: "Unbounded"; font-weight: 600; font-display: swap; src: url("../fonts/Unbounded-SemiBold.ttf") format("truetype"); }
+@font-face { font-family: "Unbounded"; font-weight: 700; font-display: swap; src: url("../fonts/Unbounded-Bold.ttf") format("truetype"); }
+@font-face { font-family: "Manrope"; font-weight: 400; font-display: swap; src: url("../fonts/Manrope-Regular.ttf") format("truetype"); }
+@font-face { font-family: "Manrope"; font-weight: 500; font-display: swap; src: url("../fonts/Manrope-Medium.ttf") format("truetype"); }
+@font-face { font-family: "Manrope"; font-weight: 600; font-display: swap; src: url("../fonts/Manrope-SemiBold.ttf") format("truetype"); }
+@font-face { font-family: "Manrope"; font-weight: 700; font-display: swap; src: url("../fonts/Manrope-Bold.ttf") format("truetype"); }
+@font-face { font-family: "Manrope"; font-weight: 800; font-display: swap; src: url("../fonts/Manrope-ExtraBold.ttf") format("truetype"); }
+@font-face { font-family: "JetBrains Mono"; font-weight: 400; font-display: swap; src: url("../fonts/JetBrainsMono-Regular.ttf") format("truetype"); }
+@font-face { font-family: "JetBrains Mono"; font-weight: 500; font-display: swap; src: url("../fonts/JetBrainsMono-Medium.ttf") format("truetype"); }
+
+:root {
+  /* paleta */
+  --np-midnight: #0B0D1A;
+  --np-harbor: #151833;
+  --np-harbor-hi: #1B1E3A;
+  --np-dusk: #24284A;
+  --np-line: #2A2F57;
+  --np-portal: #7C6CFF;
+  --np-portal-soft: #A99FFF;
+  --np-portal-deep: #5B48E8;
+  --np-tide: #3DDBD0;
+  --np-tide-deep: #0E9C93;
+  --np-ember: #FF7A45;
+  --np-ember-deep: #E85A22;
+  --np-moonlight: #EEF0FF;
+  --np-mist: #9AA0C3;
+
+  /* semántica */
+  --np-bg: var(--np-midnight);
+  --np-surface: var(--np-harbor);
+  --np-surface-inset: var(--np-harbor-hi);
+  --np-elevated: var(--np-dusk);
+  --np-border: var(--np-line);
+  --np-text: var(--np-moonlight);
+  --np-text-2: var(--np-mist);
+  --np-accent: var(--np-portal);
+  --np-support: var(--np-tide);
+  --np-energy: var(--np-ember);
+  --np-on-accent: var(--np-midnight);
+  --np-link: var(--np-portal-soft);
+
+  /* tipografía */
+  --np-font-display: "Unbounded", system-ui, sans-serif;
+  --np-font-ui: "Manrope", system-ui, sans-serif;
+  --np-font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* forma y ritmo */
+  --np-radius-chip: 14px;
+  --np-radius-control: 12px;
+  --np-radius-card: 20px;
+  --np-radius-panel: 24px;
+  --np-radius-hero: 28px;
+  --np-space-1: 4px;
+  --np-space-2: 8px;
+  --np-space-3: 12px;
+  --np-space-4: 16px;
+  --np-space-5: 24px;
+  --np-space-6: 32px;
+  --np-space-7: 48px;
+  --np-target: 44px;
+}
+
+body { margin: 0; background: var(--np-bg); color: var(--np-text); font-family: var(--np-font-ui); }
+a { color: var(--np-link); }
+a:hover { color: var(--np-text); }
+
+.np-btn-play    { min-height: 52px; padding: 0 28px; border: 0; border-radius: 14px; background: var(--np-energy); color: var(--np-on-accent); font: 800 17px var(--np-font-ui); }
+.np-btn-primary { min-height: var(--np-target); padding: 0 18px; border: 0; border-radius: var(--np-radius-control); background: var(--np-accent); color: var(--np-on-accent); font: 800 15px var(--np-font-ui); }
+.np-btn-ghost   { min-height: var(--np-target); padding: 0 18px; border: 1px solid var(--np-border); border-radius: var(--np-radius-control); background: transparent; color: var(--np-text); font: 700 15px var(--np-font-ui); }
+.np-card        { background: var(--np-surface); border: 1px solid var(--np-elevated); border-radius: var(--np-radius-card); }
+.np-overline    { font: 500 12px var(--np-font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--np-text-2); }
