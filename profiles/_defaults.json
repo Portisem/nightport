@@ -8,10 +8,12 @@
   "rosettaAVX": true,
   "retina": false,
   "metalHUD": false,
+  "frameStats": true,
   "windowsVersion": "win10",
   "wineDebug": "-all,trace+fps",
   "env": {},
   "notes": [
-    "wineDebug incluye trace+fps: wined3d reporta los FPS cada ~1.5 s y el registro de sesiones los lee."
+    "wineDebug incluye trace+fps: wined3d reporta los FPS cada ~1.5 s y el registro de sesiones los lee.",
+    "frameStats: con DXMT, D3DMetal o DXVK se activa el HUD de Metal oculto con registro (MTL_HUD_LOG_ENABLED); escribe el intervalo de cada cuadro en el log y el registro de sesiones calcula los FPS."
   ]
 }

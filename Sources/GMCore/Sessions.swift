@@ -76,7 +76,8 @@ public final class SessionRecorder {
     public let backend: GraphicsBackend
     /// Fragmento (sin mayúsculas) de la línea de comandos de los procesos del juego.
     public let processMatch: String
-    /// Log donde aparecen las trazas `fps` de wined3d (el del juego o el de Steam si lo lanza Steam).
+    /// Log donde aparecen los FPS: trazas `fps` de wined3d o líneas `metal-HUD:` del HUD de Metal
+    /// (el log del juego, o el de Steam si lo lanza Steam).
     let fpsLog: URL?
     public var interval: TimeInterval = 2
 
@@ -159,6 +160,7 @@ public final class SessionRecorder {
         var crashed = false
         var samples: [SessionSample] = []
         var allFPS: [Double] = []
+        var hudFrames: [Int: Int] = [:]
         var missing = 0
 
         while true {
@@ -176,7 +178,10 @@ public final class SessionRecorder {
                 logOffset = newOffset
                 let lower = text.lowercased()
                 if crashMarkers.contains(where: lower.contains) { crashed = true }
-                fps = text.matches(#"approx\s+[\d.]+fps"#).compactMap { Double($0.filter { "0123456789.".contains($0) }) }
+                fps = Self.metalHUDFPS(text, pids: Set(procs.map(\.pid)), lastFrame: &hudFrames)
+                if fps.isEmpty {
+                    fps = text.matches(#"approx\s+[\d.]+fps"#).compactMap { Double($0.filter { "0123456789.".contains($0) }) }
+                }
                 allFPS += fps
             }
             let gpu = Self.gpuStats()
@@ -248,15 +253,48 @@ public final class SessionRecorder {
         return (value("Device Utilization %"), value("In use system memory").map { $0 / 1_048_576 })
     }
 
-    /// Lo nuevo del log desde `offset`.
+    /// FPS de cada línea del HUD de Metal en `text` (una cada ~0.8 s con el HUD oculto). Formato
+    /// (libMTLHud, macOS 26): `metal-HUD: <cuadro>,<MB Metal>,<MB app>,<intervalo ms>,<GPU ms>,…`
+    /// con un par intervalo/GPU por cada cuadro que llegó a la pantalla desde la línea anterior.
+    /// Los intervalos suman el tiempo transcurrido; el contador de cuadros cuenta cada Present, también
+    /// los que no se mostraron (por encima de los Hz de la pantalla), igual que `trace+fps` de wined3d.
+    /// NSLog antepone `proceso[pid:tid]`: con `pids` se ignoran otras apps que escriban al mismo log.
+    /// `lastFrame` guarda el último contador por pid entre lecturas.
+    static func metalHUDFPS(_ text: String, pids: Set<Int> = [], lastFrame: inout [Int: Int]) -> [Double] {
+        text.split(separator: "\n").compactMap { line in
+            guard let r = line.range(of: "metal-HUD: ") else { return nil }
+            let pid = line[..<r.lowerBound].range(of: #"\[\d+:"#, options: [.regularExpression, .backwards])
+                .flatMap { Int(line[$0].dropFirst().dropLast()) } ?? 0
+            if !pids.isEmpty, pid != 0, !pids.contains(pid) { return nil }
+            let values = line[r.upperBound...].split(separator: ",").map { Double($0.trimmingCharacters(in: .whitespaces)) }
+            guard values.count >= 5, (values.count - 3) % 2 == 0, let frame = values[0].map(Int.init) else { return nil }
+            let intervals = stride(from: 3, to: values.count, by: 2).compactMap { values[$0] }
+            let ms = intervals.reduce(0, +)
+            guard intervals.count == (values.count - 3) / 2, ms > 0 else { return nil }
+            defer { lastFrame[pid] = frame }
+            // La primera línea de cada proceso solo sirve de referencia para el contador
+            guard let previous = lastFrame[pid] else { return nil }
+            // Si el contador se reinició (swapchain nueva) solo se conocen los cuadros mostrados
+            let frames = frame > previous ? frame - previous : intervals.count
+            return Double(frames) * 1000 / ms
+        }
+    }
+
+    /// Lo nuevo del log desde `offset`, hasta el último salto de línea (una línea a medio escribir
+    /// se lee completa en la siguiente vuelta).
     static func read(_ url: URL, from offset: UInt64) -> (String, UInt64)? {
         guard let h = try? FileHandle(forReadingFrom: url) else { return nil }
         defer { try? h.close() }
         let size = (try? h.seekToEnd()) ?? 0
         guard size > offset else { return ("", size) }
         try? h.seek(toOffset: offset)
-        let data = (try? h.readToEnd()) ?? Data()
-        return (String(decoding: data, as: UTF8.self), size)
+        var data = (try? h.readToEnd()) ?? Data()
+        if let nl = data.lastIndex(of: 0x0A) {
+            data = data[..<data.index(after: nl)]
+        } else if data.count < 1 << 20 {
+            return ("", offset)
+        }
+        return (String(decoding: data, as: UTF8.self), offset + UInt64(data.count))
     }
 }
 
@@ -283,7 +321,7 @@ public enum SessionInsights {
                 out.append(.init(kind: .problem, text: "Por debajo de 30 FPS: baja la resolución o la calidad dentro del juego."))
             }
         } else if s.backend != GraphicsBackend.wined3d.rawValue {
-            out.append(.init(kind: .tip, text: "Los FPS solo se miden con OpenGL (wined3d) por ahora. Activa el HUD de Metal para verlos en pantalla."))
+            out.append(.init(kind: .tip, text: "Sin FPS medidos: el contador (HUD de Metal oculto) solo se activa cuando Nightport lanza el juego. Si ya estaba abierto o lo abrió Steam, ciérralo y lánzalo desde aquí."))
         }
         if let gpu = s.avgGPU {
             if gpu >= 90 {
