@@ -209,11 +209,11 @@ enum CompatStatus: String, CaseIterable {
 
     var label: String {
         switch self {
-        case .excelente: return "Excelente"
-        case .jugable: return "Jugable"
-        case .enPruebas: return "En pruebas"
-        case .sinProbar: return "Sin probar"
-        case .bloqueado: return "Bloqueado"
+        case .excelente: return String(localized: "Excelente")
+        case .jugable: return String(localized: "Jugable")
+        case .enPruebas: return String(localized: "En pruebas")
+        case .sinProbar: return String(localized: "Sin probar")
+        case .bloqueado: return String(localized: "Bloqueado")
         }
     }
 
@@ -317,7 +317,7 @@ struct NightportLockup: View {
     var body: some View {
         HStack(spacing: 10) {
             NightportMark().frame(width: markSize, height: markSize)
-            Text("nightport")
+            Text(verbatim: "nightport")
                 .font(NP.display(markSize * 0.6))
                 .tracking(-0.3)
                 .foregroundStyle(NP.textPrimary)

@@ -56,8 +56,8 @@ struct LibraryView: View {
                 Circle().fill(model.steamRunning ? NP.support : NP.textSecondary)
                     .frame(width: 10, height: 10)
                     .frame(width: NP.minTarget, height: NP.minTarget)
-                    .help(model.steamRunning ? "Steam abierto" : "Steam cerrado")
-                    .accessibilityLabel(model.steamRunning ? "Steam abierto" : "Steam cerrado")
+                    .help(model.steamRunning ? Text("Steam abierto") : Text("Steam cerrado"))
+                    .accessibilityLabel(model.steamRunning ? Text("Steam abierto") : Text("Steam cerrado"))
             } else {
                 SteamPill(running: model.steamRunning)
             }
@@ -80,7 +80,7 @@ struct LibraryView: View {
         HStack(spacing: 10) {
             ForEach(LibraryFilter.allCases) { f in
                 let count = f == .all ? " · \(model.games.count)" : ""
-                FilterPill(title: f.rawValue + count, selected: model.filter == f) { model.filter = f }
+                FilterPill(title: f.title + count, selected: model.filter == f) { model.filter = f }
             }
         }
     }
@@ -93,9 +93,10 @@ struct HeroCard: View {
 
     private var sessionText: String {
         var parts: [String] = []
-        if !model.isInstalled(profile) { return "En tu biblioteca de Steam, pero no está descargado." }
-        if let when = relativeSession(model.lastSession(profile.id)) { parts.append("Última sesión: \(when).") }
-        parts.append(model.userOverrides(profile.id).isEmpty ? "Perfil recomendado aplicado." : "Con tus ajustes personalizados.")
+        if !model.isInstalled(profile) { return String(localized: "En tu biblioteca de Steam, pero no está descargado.") }
+        if let when = relativeSession(model.lastSession(profile.id)) { parts.append(String(localized: "Última sesión: \(when).")) }
+        parts.append(model.userOverrides(profile.id).isEmpty ? String(localized: "Perfil recomendado aplicado.")
+                                                             : String(localized: "Con tus ajustes personalizados."))
         return parts.joined(separator: " ")
     }
 
@@ -107,7 +108,7 @@ struct HeroCard: View {
                 .clipped()
 
             VStack(alignment: .leading, spacing: 14) {
-                Text(lastPlayed ? "Continúa jugando" : "Seleccionado").npOverline(NP.support)
+                (lastPlayed ? Text("Continúa jugando") : Text("Seleccionado")).npOverline(NP.support)
                 Text(profile.name)
                     .font(NP.display(30, .bold))
                     .lineLimit(2)
@@ -174,7 +175,7 @@ struct GameCard: View {
                     .lineLimit(1)
                 HStack(spacing: 8) {
                     CompatBadge(status: profile.compat)
-                    Text(model.isInstalled(profile) ? profile.sourceLabel : "No instalado")
+                    Text(model.isInstalled(profile) ? profile.sourceLabel : String(localized: "No instalado"))
                         .font(NP.ui(13)).foregroundStyle(NP.textSecondary).lineLimit(1)
                 }
             }
@@ -200,7 +201,8 @@ struct GameCard: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isButton)
-        .accessibilityHint(model.isInstalled(profile) ? "Selecciona el juego. Doble clic para jugar." : "Selecciona el juego. Doble clic para instalarlo.")
+        .accessibilityHint(model.isInstalled(profile) ? Text("Selecciona el juego. Doble clic para jugar.")
+                                                       : Text("Selecciona el juego. Doble clic para instalarlo."))
     }
 }
 

@@ -17,6 +17,11 @@ cp -R profiles "$APP/Contents/Resources/profiles"
 iconutil -c icns brand/icon/AppIcon.iconset -o "$APP/Contents/Resources/AppIcon.icns"
 mkdir -p "$APP/Contents/Resources/Fonts"
 cp brand/fonts/*.ttf brand/fonts/OFL-*.txt "$APP/Contents/Resources/Fonts/"
+# Textos en español e inglés: los .lproj procesados por SwiftPM van directo a Resources (Bundle.main).
+RES_BUNDLE="$BIN/GamingMac_GamingMacApp.bundle"
+LPROJS=$(find "$RES_BUNDLE" -name '*.lproj' -type d)
+[ -n "$LPROJS" ] || { echo "No encontré traducciones en $RES_BUNDLE" >&2; exit 1; }
+for lproj in $LPROJS; do cp -R "$lproj" "$APP/Contents/Resources/"; done
 
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -25,6 +30,8 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 <dict>
   <key>CFBundleName</key><string>Nightport</string>
   <key>CFBundleDisplayName</key><string>Nightport</string>
+  <key>CFBundleDevelopmentRegion</key><string>en</string>
+  <key>CFBundleLocalizations</key><array><string>en</string><string>es</string></array>
   <key>CFBundleIdentifier</key><string>local.nightport.app</string>
   <key>CFBundleExecutable</key><string>GamingMac</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>

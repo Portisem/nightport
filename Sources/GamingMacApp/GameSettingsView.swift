@@ -7,8 +7,17 @@ struct GameSettingsView: View {
     let profile: GameProfile
 
     enum Tab: String, CaseIterable, Identifiable {
-        case general = "General", graphics = "Gráficos", controls = "Controles", advanced = "Avanzado"
+        case general, graphics, controls, advanced
         var id: String { rawValue }
+
+        var title: LocalizedStringKey {
+            switch self {
+            case .general: return "General"
+            case .graphics: return "Gráficos"
+            case .controls: return "Controles"
+            case .advanced: return "Avanzado"
+            }
+        }
     }
     @State private var tab: Tab = .general
 
@@ -63,7 +72,7 @@ struct GameSettingsView: View {
             ForEach(Tab.allCases) { t in
                 Button { tab = t } label: {
                     VStack(spacing: 10) {
-                        Text(t.rawValue)
+                        Text(t.title)
                             .font(NP.ui(15, tab == t ? .bold : .medium))
                             .foregroundStyle(tab == t ? NP.textPrimary : NP.textSecondary)
                             .padding(.horizontal, 16)
@@ -166,11 +175,9 @@ struct GraphicsTab: View {
                 .foregroundStyle(user.isEmpty ? NP.support : NP.portalSoft)
             Group {
                 if user.isEmpty {
-                    Text("Estás usando el ") + Text("perfil recomendado").bold()
-                        + Text(". Si cambias algo, siempre puedes volver a él.")
+                    Text("Estás usando el **perfil recomendado**. Si cambias algo, siempre puedes volver a él.")
                 } else {
-                    Text("Estás usando ") + Text("tus ajustes").bold()
-                        + Text(" encima del perfil recomendado.")
+                    Text("Estás usando **tus ajustes** encima del perfil recomendado.")
                 }
             }
             .font(NP.ui(14))
@@ -198,8 +205,8 @@ struct GraphicsTab: View {
 }
 
 struct SettingRow<Control: View>: View {
-    let title: String
-    let detail: String
+    let title: LocalizedStringKey
+    let detail: LocalizedStringKey
     @ViewBuilder var control: Control
 
     var body: some View {
@@ -218,8 +225,8 @@ struct SettingRow<Control: View>: View {
 }
 
 struct ToggleRow: View {
-    let title: String
-    let detail: String
+    let title: LocalizedStringKey
+    let detail: LocalizedStringKey
     @Binding var isOn: Bool
     var body: some View {
         SettingRow(title: title, detail: detail) {
@@ -239,13 +246,13 @@ struct RowDivider: View {
 struct FPSLimitPicker: View {
     var body: some View {
         HStack(spacing: 4) {
-            ForEach(["40", "60", "120", "Sin tope"], id: \.self) { v in
-                Text(v)
-                    .font(v == "Sin tope" ? NP.ui(13, .semibold) : NP.mono(13, .medium))
-                    .foregroundStyle(v == "Sin tope" ? NP.textPrimary : NP.textSecondary)
+            ForEach(["40", "60", "120", nil], id: \.self) { (v: String?) in
+                (v.map { Text(verbatim: $0) } ?? Text("Sin tope"))
+                    .font(v == nil ? NP.ui(13, .semibold) : NP.mono(13, .medium))
+                    .foregroundStyle(v == nil ? NP.textPrimary : NP.textSecondary)
                     .padding(.horizontal, 12)
                     .frame(height: 36)
-                    .background(v == "Sin tope" ? NP.elevated : Color.clear,
+                    .background(v == nil ? NP.elevated : Color.clear,
                                 in: RoundedRectangle(cornerRadius: 9, style: .continuous))
             }
         }
@@ -283,7 +290,7 @@ struct HUDPreview: View {
         .accessibilityElement(children: .combine)
     }
 
-    private func metric(_ label: String, _ value: String, _ color: Color, big: Bool = false) -> some View {
+    private func metric(_ label: LocalizedStringKey, _ value: String, _ color: Color, big: Bool = false) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label).font(NP.mono(10, .medium)).foregroundStyle(NP.textSecondary)
             Text(value).font(NP.mono(big ? 24 : 17, .medium)).foregroundStyle(color)
@@ -298,11 +305,11 @@ struct ControllerCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 10) {
                 Image(systemName: "gamecontroller.fill").foregroundStyle(NP.portalSoft)
-                Text(controllers.isEmpty ? "Sin control conectado" : "Control conectado").font(NP.ui(16, .bold))
+                (controllers.isEmpty ? Text("Sin control conectado") : Text("Control conectado")).font(NP.ui(16, .bold))
             }
-            Text(controllers.isEmpty
-                 ? "Conecta un control por Bluetooth o USB y aparecerá aquí."
-                 : "\(controllers.joined(separator: ", ")). Botones mapeados al estilo Xbox.")
+            (controllers.isEmpty
+                 ? Text("Conecta un control por Bluetooth o USB y aparecerá aquí.")
+                 : Text("\(controllers.joined(separator: ", ")). Botones mapeados al estilo Xbox."))
                 .font(NP.ui(14, .regular))
                 .foregroundStyle(NP.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -380,7 +387,7 @@ struct GeneralTab: View {
 }
 
 struct InfoRow<Value: View>: View {
-    let label: String
+    let label: LocalizedStringKey
     @ViewBuilder var value: Value
     var body: some View {
         HStack {
@@ -417,7 +424,7 @@ struct AdvancedTab: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             InfoRow(label: "Ejecutable") {
-                Text(profile.launch?.exe ?? "Lanzado por Steam (\(profile.steamAppId.map(String.init) ?? "—"))")
+                Text(profile.launch?.exe ?? String(localized: "Lanzado por Steam (\(profile.steamAppId.map(String.init) ?? "—"))"))
                     .font(NP.mono(12))
                     .foregroundStyle(NP.textSecondary)
                     .lineLimit(1)
@@ -426,13 +433,13 @@ struct AdvancedTab: View {
             RowDivider()
             InfoRow(label: "Sincronización") { NPChip(text: (profile.sync ?? .msync).rawValue.uppercased(), mono: true) }
             RowDivider()
-            InfoRow(label: "AVX en Rosetta") { NPChip(text: (profile.rosettaAVX ?? true) ? "Activado" : "Desactivado") }
+            InfoRow(label: "AVX en Rosetta") { NPChip(text: (profile.rosettaAVX ?? true) ? String(localized: "Activado") : String(localized: "Desactivado")) }
             if let env = profile.env, !env.isEmpty {
                 RowDivider()
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Variables del perfil").font(NP.ui(16, .bold))
                     ForEach(env.keys.sorted(), id: \.self) { key in
-                        Text("\(key)=\(env[key] ?? "")").font(NP.mono(12)).foregroundStyle(NP.textSecondary)
+                        Text(verbatim: "\(key)=\(env[key] ?? "")").font(NP.mono(12)).foregroundStyle(NP.textSecondary)
                     }
                 }
                 .padding(.vertical, 16)
