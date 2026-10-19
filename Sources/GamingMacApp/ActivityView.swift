@@ -84,7 +84,7 @@ struct ActivityView: View {
 }
 
 struct StatTile: View {
-    let label: String
+    let label: LocalizedStringKey
     let value: String
     var small = false
     var body: some View {
@@ -130,7 +130,7 @@ struct LiveSessionCard: View {
         .overlay(RoundedRectangle(cornerRadius: NP.Radius.panel, style: .continuous).strokeBorder(NP.support.opacity(0.6)))
     }
 
-    private func metric(_ label: String, _ value: String) -> some View {
+    private func metric(_ label: LocalizedStringKey, _ value: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label).font(NP.mono(10, .medium)).foregroundStyle(NP.textSecondary)
             Text(value).font(NP.mono(18, .medium))
@@ -153,7 +153,8 @@ struct GameActivityCard: View {
             HStack {
                 Text(name).font(NP.ui(17, .bold))
                 Spacer()
-                Text("\(sessions.count) \(sessions.count == 1 ? "sesión" : "sesiones") · " + (hours >= 1 ? String(format: "%.1f h", hours) : "\(Int(hours * 60)) min"))
+                let count = sessions.count == 1 ? String(localized: "\(sessions.count) sesión") : String(localized: "\(sessions.count) sesiones")
+                Text(count + " · " + (hours >= 1 ? String(format: "%.1f h", hours) : "\(Int(hours * 60)) min"))
                     .font(NP.mono(12)).foregroundStyle(NP.textSecondary)
             }
             InsightList(insights: SessionInsights.analyze(last, candidates: candidates),
@@ -202,8 +203,8 @@ struct SessionRow: View {
 
     private var when: String {
         let f = DateFormatter()
-        f.locale = Locale(identifier: "es_MX")
-        f.dateFormat = "d MMM, HH:mm"
+        f.locale = appLocale
+        f.setLocalizedDateFormatFromTemplate("dMMMHHmm")
         return f.string(from: session.start)
     }
 
@@ -215,23 +216,23 @@ struct SessionRow: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             NPChip(text: session.backend.uppercased(), mono: true)
-            cell("FPS", session.avgFPS.map { "\(Int($0)) / \(Int(session.lowFPS ?? $0))" } ?? "—")
+            cell("FPS", session.avgFPS.map { "\(Int($0)) / \(Int(session.lowFPS ?? $0))" } ?? "—", help: "Promedio / 5% más lento")
             cell("CPU", "\(Int(session.avgCPU))%")
             cell("GPU", session.avgGPU.map { "\(Int($0))%" } ?? "—")
             cell("MEM", String(format: "%.1f GB", session.peakMemoryMB / 1024))
-            if session.crashed { Image(systemName: "exclamationmark.octagon.fill").foregroundStyle(NP.energy).help("Terminó con error") }
-            if session.maxThermal >= 2 { Image(systemName: "thermometer.high").foregroundStyle(NP.energy).help("Se calentó") }
+            if session.crashed { Image(systemName: "exclamationmark.octagon.fill").foregroundStyle(NP.energy).help(Text("Terminó con error")) }
+            if session.maxThermal >= 2 { Image(systemName: "thermometer.high").foregroundStyle(NP.energy).help(Text("Se calentó")) }
         }
         .padding(.vertical, 12)
         .accessibilityElement(children: .combine)
     }
 
-    private func cell(_ label: String, _ value: String) -> some View {
+    private func cell(_ label: LocalizedStringKey, _ value: String, help: LocalizedStringKey? = nil) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(label).font(NP.mono(10, .medium)).foregroundStyle(NP.textSecondary)
             Text(value).font(NP.mono(13, .medium))
         }
         .frame(width: 74, alignment: .leading)
-        .help(label == "FPS" ? "Promedio / 5% más lento" : "")
+        .help(help.map { Text($0) } ?? Text(verbatim: ""))
     }
 }

@@ -75,7 +75,7 @@ struct SteamPill: View {
     var body: some View {
         HStack(spacing: 8) {
             Circle().fill(running ? NP.support : NP.textSecondary).frame(width: 8, height: 8)
-            Text(running ? "Steam abierto" : "Steam cerrado")
+            (running ? Text("Steam abierto") : Text("Steam cerrado"))
                 .font(NP.ui(14, .semibold))
                 .lineLimit(1)
                 .fixedSize()
@@ -114,7 +114,7 @@ struct SearchField: View {
 
 /// Aviso con borde Ember (pantalla dormida, errores importantes).
 struct NoticeBanner: View {
-    let text: String
+    let text: LocalizedStringKey
     var symbol = "exclamationmark.triangle.fill"
     var body: some View {
         HStack(spacing: 12) {
@@ -149,11 +149,20 @@ struct FilterPill: View {
     }
 }
 
-/// "hace 2 h", "ayer"… en español.
+/// Locale del idioma en que se muestra la interfaz. Si el sistema está en un idioma sin traducción,
+/// la app cae a otro (inglés) y fechas y textos deben coincidir. Sin tablas (`swift run`), español.
+var appLocale: Locale {
+    guard Bundle.main.localizations.contains("es"), let lang = Bundle.main.preferredLocalizations.first else {
+        return Locale(identifier: "es_MX")
+    }
+    return Locale.current.language.languageCode?.identifier == lang ? .current : Locale(identifier: lang)
+}
+
+/// "hace 2 h", "ayer", "2 hours ago"… en el idioma de la interfaz.
 func relativeSession(_ date: Date?) -> String? {
     guard let date else { return nil }
     let f = RelativeDateTimeFormatter()
-    f.locale = Locale(identifier: "es_MX")
+    f.locale = appLocale
     f.unitsStyle = .full
     return f.localizedString(for: date, relativeTo: Date())
 }

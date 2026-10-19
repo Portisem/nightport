@@ -309,34 +309,34 @@ public enum SessionInsights {
     public static func analyze(_ s: SessionSummary, candidates: [GraphicsBackend] = []) -> [Insight] {
         var out: [Insight] = []
         if s.crashed {
-            out.append(.init(kind: .problem, text: "Terminó con un error de Windows. El log de la sesión tiene el detalle."))
+            out.append(.init(kind: .problem, text: String(localized: "Terminó con un error de Windows. El log de la sesión tiene el detalle.")))
         }
         if let avg = s.avgFPS {
             if let low = s.lowFPS, low < avg * 0.6 {
-                out.append(.init(kind: .tip, text: "Tirones: promedio \(Int(avg)) FPS, pero el 5% más lento baja a \(Int(low)). Suele ser compilación de shaders (mejora al seguir jugando) o carga de texturas; si persiste, un tope de FPS estabiliza."))
+                out.append(.init(kind: .tip, text: String(localized: "Tirones: promedio \(Int(avg)) FPS, pero el 5% más lento baja a \(Int(low)). Suele ser compilación de shaders (mejora al seguir jugando) o carga de texturas; si persiste, un tope de FPS estabiliza.")))
             } else if avg >= 55 {
-                out.append(.init(kind: .good, text: "Fluido: \(Int(avg)) FPS de promedio y sin caídas grandes."))
+                out.append(.init(kind: .good, text: String(localized: "Fluido: \(Int(avg)) FPS de promedio y sin caídas grandes.")))
             }
             if avg < 30 {
-                out.append(.init(kind: .problem, text: "Por debajo de 30 FPS: baja la resolución o la calidad dentro del juego."))
+                out.append(.init(kind: .problem, text: String(localized: "Por debajo de 30 FPS: baja la resolución o la calidad dentro del juego.")))
             }
         } else if s.backend != GraphicsBackend.wined3d.rawValue {
-            out.append(.init(kind: .tip, text: "Sin FPS medidos: el contador (HUD de Metal oculto) solo se activa cuando Nightport lanza el juego. Si ya estaba abierto o lo abrió Steam, ciérralo y lánzalo desde aquí."))
+            out.append(.init(kind: .tip, text: String(localized: "Sin FPS medidos: el contador (HUD de Metal oculto) solo se activa cuando Nightport lanza el juego. Si ya estaba abierto o lo abrió Steam, ciérralo y lánzalo desde aquí.")))
         }
         if let gpu = s.avgGPU {
             if gpu >= 90 {
-                out.append(.init(kind: .tip, text: "La GPU fue al \(Int(gpu))%: es el límite. Desactiva Modo Retina o baja la resolución para ganar FPS."))
+                out.append(.init(kind: .tip, text: String(localized: "La GPU fue al \(Int(gpu))%: es el límite. Desactiva Modo Retina o baja la resolución para ganar FPS.")))
             } else if gpu < 50, let avg = s.avgFPS, avg < 50 {
                 let others = candidates.filter { $0.rawValue != s.backend }.map(\.rawValue)
-                out.append(.init(kind: .tip, text: "La GPU iba sobrada (\(Int(gpu))%) pero con pocos FPS: el freno es la CPU o la traducción."
-                                 + (others.isEmpty ? "" : " Prueba otro traductor: \(others.joined(separator: ", ")).")))
+                out.append(.init(kind: .tip, text: String(localized: "La GPU iba sobrada (\(Int(gpu))%) pero con pocos FPS: el freno es la CPU o la traducción.")
+                                 + (others.isEmpty ? "" : String(localized: " Prueba otro traductor: \(others.joined(separator: ", "))."))))
             }
         }
         if s.peakMemoryMB / 1024 > s.macMemoryGB * 0.75 {
-            out.append(.init(kind: .problem, text: "Usó \(Int(s.peakMemoryMB / 1024)) GB de \(Int(s.macMemoryGB)) GB: cierra otras apps mientras juegas."))
+            out.append(.init(kind: .problem, text: String(localized: "Usó \(Int(s.peakMemoryMB / 1024)) GB de \(Int(s.macMemoryGB)) GB: cierra otras apps mientras juegas.")))
         }
         if s.maxThermal >= 2 {
-            out.append(.init(kind: .problem, text: "La Mac se calentó al punto de bajar velocidad. Un tope de FPS reduce el calor."))
+            out.append(.init(kind: .problem, text: String(localized: "La Mac se calentó al punto de bajar velocidad. Un tope de FPS reduce el calor.")))
         }
         return out
     }
@@ -347,7 +347,7 @@ public enum SessionInsights {
         guard byBackend.count >= 2 else { return nil }
         let avgs = byBackend.mapValues { list in list.compactMap(\.avgFPS).reduce(0, +) / Double(list.count) }
             .sorted { $0.value > $1.value }
-        return "Mejor traductor medido: \(avgs[0].key) (\(Int(avgs[0].value)) FPS) contra "
-            + avgs.dropFirst().map { "\($0.key) (\(Int($0.value)))" }.joined(separator: ", ") + "."
+        let rest = avgs.dropFirst().map { "\($0.key) (\(Int($0.value)))" }.joined(separator: ", ")
+        return String(localized: "Mejor traductor medido: \(avgs[0].key) (\(Int(avgs[0].value)) FPS) contra \(rest).")
     }
 }

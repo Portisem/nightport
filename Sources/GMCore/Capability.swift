@@ -258,16 +258,18 @@ enum GPUCatalog {
 }
 
 /// Veredicto: qué tan bien correría un juego en esta Mac.
+/// Los textos usan `String(localized:)` con `Bundle.main`: Nightport.app trae la traducción al inglés;
+/// `gmac` suelto no trae tablas y se queda en español.
 public struct CapabilityReport {
     public enum Level: Int, Comparable {
         case insuficiente = 0, minimo, recomendado, holgado
         public static func < (a: Level, b: Level) -> Bool { a.rawValue < b.rawValue }
         public var label: String {
             switch self {
-            case .holgado: return "Va sobrado"
-            case .recomendado: return "Cumple lo recomendado"
-            case .minimo: return "Cumple el mínimo"
-            case .insuficiente: return "Por debajo del mínimo"
+            case .holgado: return String(localized: "Va sobrado")
+            case .recomendado: return String(localized: "Cumple lo recomendado")
+            case .minimo: return String(localized: "Cumple el mínimo")
+            case .insuficiente: return String(localized: "Por debajo del mínimo")
             }
         }
     }
@@ -305,7 +307,7 @@ public enum Capability {
     static let systemReserveGB = 4.0
 
     public static func macSummary(_ mac: MacSpecs) -> String {
-        "\(mac.chip) · \(mac.gpuCores) núcleos de GPU · \(Int(mac.memoryGB)) GB · rinde como una \(nativeEquivalent(mac)) en juegos nativos"
+        String(localized: "\(mac.chip) · \(mac.gpuCores) núcleos de GPU · \(Int(mac.memoryGB)) GB · rinde como una \(nativeEquivalent(mac)) en juegos nativos")
     }
 
     public static func nativeEquivalent(_ mac: MacSpecs) -> String { GPUCatalog.nearestName(mac.gpuIndex) }
@@ -333,8 +335,8 @@ public enum Capability {
 
         // Gráficos
         let gpuLevel = level(eff, min: minT?.gpuIndex, rec: recT?.gpuIndex)
-        rows.append(.init(resource: "Gráficos",
-                          mac: "\(mac.chip), \(mac.gpuCores) núcleos ≈ \(GPUCatalog.nearestName(eff))",
+        rows.append(.init(resource: String(localized: "Gráficos"),
+                          mac: String(localized: "\(mac.chip), \(mac.gpuCores) núcleos ≈ \(GPUCatalog.nearestName(eff))"),
                           minimum: minT?.gpu, recommended: recT?.gpu, level: gpuLevel))
 
         // Memoria: en Apple Silicon la RAM y la VRAM del juego salen de la misma memoria unificada.
@@ -349,9 +351,9 @@ public enum Capability {
             var parts: [String] = []
             if let r = t.ramGB { parts.append("\(gb(r)) RAM") }
             if let v = t.vramGB { parts.append("\(gb(v)) VRAM") }
-            return parts.joined(separator: " + ") + " → \(gb(total)) unificada"
+            return String(localized: "\(parts.joined(separator: " + ")) → \(gb(total)) unificada")
         }
-        rows.append(.init(resource: "Memoria", mac: "\(gb(mac.memoryGB)) unificada",
+        rows.append(.init(resource: String(localized: "Memoria"), mac: String(localized: "\(gb(mac.memoryGB)) unificada"),
                           minimum: memText(minT), recommended: memText(recT), level: memLevel))
 
         // Almacenamiento (solo importa si falta descargarlo)
@@ -360,31 +362,31 @@ public enum Capability {
         if let disk {
             diskLevel = installed || mac.freeDiskGB >= disk ? .recomendado : .insuficiente
             if diskLevel == .insuficiente {
-                warnings.append("Faltan \(gb(disk - mac.freeDiskGB)) libres para descargarlo.")
+                warnings.append(String(localized: "Faltan \(gb(disk - mac.freeDiskGB)) libres para descargarlo."))
             }
         }
-        rows.append(.init(resource: "Almacenamiento",
-                          mac: installed ? "Instalado" : "\(gb(mac.freeDiskGB)) libres",
+        rows.append(.init(resource: String(localized: "Almacenamiento"),
+                          mac: installed ? String(localized: "Instalado") : String(localized: "\(gb(mac.freeDiskGB)) libres"),
                           minimum: minT?.diskGB.map(gb), recommended: recT?.diskGB.map(gb), level: diskLevel))
 
         let overall = [gpuLevel, memLevel].compactMap { $0 }.min()
         if gpuLevel == nil, requirements != nil {
-            warnings.append("No reconocí la tarjeta gráfica que pide Steam; el veredicto solo considera la memoria.")
+            warnings.append(String(localized: "No reconocí la tarjeta gráfica que pide Steam; el veredicto solo considera la memoria."))
         }
 
         var summary: String
         if ProfileStatus.blocked(profile.status) {
-            summary = "Tu Mac tiene la potencia, pero el anti-cheat del juego no funciona fuera de Windows."
-            warnings.insert("Bloqueado por anti-cheat.", at: 0)
+            summary = String(localized: "Tu Mac tiene la potencia, pero el anti-cheat del juego no funciona fuera de Windows.")
+            warnings.insert(String(localized: "Bloqueado por anti-cheat."), at: 0)
         } else {
             switch overall {
-            case .holgado?: summary = "Tu Mac va sobrada: calidad alta, incluso con el costo de la traducción."
-            case .recomendado?: summary = "Tu Mac cumple lo recomendado: calidad media-alta."
-            case .minimo?: summary = "Tu Mac cumple el mínimo: calidad baja y resolución reducida."
-            case .insuficiente?: summary = "Tu Mac queda por debajo del mínimo: puede abrir, pero no se jugará bien."
+            case .holgado?: summary = String(localized: "Tu Mac va sobrada: calidad alta, incluso con el costo de la traducción.")
+            case .recomendado?: summary = String(localized: "Tu Mac cumple lo recomendado: calidad media-alta.")
+            case .minimo?: summary = String(localized: "Tu Mac cumple el mínimo: calidad baja y resolución reducida.")
+            case .insuficiente?: summary = String(localized: "Tu Mac queda por debajo del mínimo: puede abrir, pero no se jugará bien.")
             case nil: summary = requirements == nil
-                ? "Steam no publica requisitos para este juego."
-                : "No hay datos suficientes para estimarlo."
+                ? String(localized: "Steam no publica requisitos para este juego.")
+                : String(localized: "No hay datos suficientes para estimarlo.")
             }
         }
 
@@ -406,8 +408,8 @@ public enum Capability {
                 .first { $0.1 >= needed }?.0
         }
         let mem = memory.flatMap { m in AppleGPU.memorySteps.first { $0 >= m } }
-        guard let chip else { return "Ninguna Mac actual alcanza lo recomendado con traducción." }
-        return mem.map { "\(chip) o superior, con \(Int($0)) GB" } ?? "\(chip) o superior"
+        guard let chip else { return String(localized: "Ninguna Mac actual alcanza lo recomendado con traducción.") }
+        return mem.map { String(localized: "\(chip) o superior, con \(Int($0)) GB") } ?? String(localized: "\(chip) o superior")
     }
 
     static func gb(_ v: Double) -> String {

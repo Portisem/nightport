@@ -37,8 +37,16 @@ struct NightportApp: App {
 }
 
 enum LibraryFilter: String, CaseIterable, Identifiable {
-    case all = "Todos", steam = "Steam", other = "Ejecutables"
+    case all, steam, other
     var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .all: return String(localized: "Todos")
+        case .steam: return "Steam"
+        case .other: return String(localized: "Ejecutables")
+        }
+    }
 }
 
 @MainActor
@@ -58,7 +66,7 @@ final class AppModel: ObservableObject {
     @Published var search = ""
     @Published var filter: LibraryFilter = .all
     @Published var featuredID: String?
-    @Published var status = "Listo"
+    @Published var status = String(localized: "Listo")
     @Published var engineName = "—"
     @Published var steamRunning = false
     @Published var displayAsleep = false
@@ -100,9 +108,9 @@ final class AppModel: ObservableObject {
                 .filter { !Self.hidden.contains($0.id) && !$0.id.hasPrefix("gmtest") }
                 .map { try ProfileStore.resolved($0.id) }
         } catch {
-            status = "No pude leer los perfiles de juegos: \(error)"
+            status = String(localized: "No pude leer los perfiles de juegos: \(String(describing: error))")
         }
-        engineName = (try? Engine.find(nil).name) ?? "sin motor"
+        engineName = (try? Engine.find(nil).name) ?? String(localized: "sin motor")
         games = []  // fuerza a refreshLibrary a reconstruir con los perfiles nuevos
         refreshStatus()
     }
@@ -143,8 +151,8 @@ final class AppModel: ObservableObject {
                 self.live = nil
                 self.sessions = SessionStore.list()
                 if let summary {
-                    let fps = summary.avgFPS.map { " · \(Int($0)) FPS de promedio" } ?? ""
-                    self.status = "Sesión de \(game.name) guardada: \(Int(summary.duration / 60)) min\(fps)"
+                    let fps = summary.avgFPS.map { String(localized: " · \(Int($0)) FPS de promedio") } ?? ""
+                    self.status = String(localized: "Sesión de \(game.name) guardada: \(Int(summary.duration / 60)) min\(fps)")
                 }
             }
         }
@@ -264,9 +272,9 @@ final class AppModel: ObservableObject {
     // MARK: Acciones
 
     func openSteam() {
-        perform("Abriendo Steam en su espacio aislado…") {
+        perform(String(localized: "Abriendo Steam en su espacio aislado…")) {
             let plan = try Steam.start(bottle: try Self.bottle(), engine: try Engine.find(nil))
-            return "Steam abierto · traductor \(plan.backend.label)"
+            return String(localized: "Steam abierto · traductor \(plan.backend.label)")
         }
     }
 
@@ -275,7 +283,7 @@ final class AppModel: ObservableObject {
         UserDefaults.standard.set(Date(), forKey: "lastSession.\(profile.id)")
         let user = Launcher.Overrides(userOverrides(profile.id))
         let needsSteam = profile.steamAppId != nil && !steamRunning
-        perform("Preparando \(profile.name)…") {
+        perform(String(localized: "Preparando \(profile.name)…")) {
             let engine = try Engine.find(nil)
             let bottle = try Self.bottle()
             if needsSteam {
@@ -285,24 +293,24 @@ final class AppModel: ObservableObject {
             let plan = try Launcher.plan(profile: try ProfileStore.resolved(profile.id, bottle: bottle),
                                          engine: engine, bottle: bottle, overrides: user)
             _ = try Launcher.spawn(plan)
-            return "\(profile.name) en marcha · \(plan.backend.label)"
+            return String(localized: "\(profile.name) en marcha · \(plan.backend.label)")
         }
     }
 
     func install(_ profile: GameProfile) {
         guard let appId = profile.steamAppId else { return }
-        perform("Abriendo la instalación de \(profile.name) en Steam…") {
+        perform(String(localized: "Abriendo la instalación de \(profile.name) en Steam…")) {
             try Steam.requestInstall(appId: appId, bottle: try Self.bottle(), engine: try Engine.find(nil))
-            return "Confirma la instalación de \(profile.name) en la ventana de Steam"
+            return String(localized: "Confirma la instalación de \(profile.name) en la ventana de Steam")
         }
     }
 
     func stopAll() {
-        perform("Cerrando Steam y juegos…") {
+        perform(String(localized: "Cerrando Steam y juegos…")) {
             let engine = try Engine.find(nil)
             let env = Steam.engineEnvironment(engine).merging(["WINEPREFIX": try Self.bottle().url.path]) { _, n in n }
             try Shell.run(engine.wineserver, ["-k"], environment: env)
-            return "Steam y juegos cerrados"
+            return String(localized: "Steam y juegos cerrados")
         }
     }
 
@@ -314,7 +322,7 @@ final class AppModel: ObservableObject {
     private static func bottle() throws -> Bottle {
         let bottles = Bottle.list()
         guard let b = bottles.first(where: { $0.name == "Steam" }) ?? bottles.first else {
-            throw GMError("Aún no hay un espacio aislado para Steam.")
+            throw GMError(String(localized: "Aún no hay un espacio aislado para Steam."))
         }
         return b
     }
@@ -323,7 +331,7 @@ final class AppModel: ObservableObject {
         status = message
         Task.detached {
             let result: String
-            do { result = try work() } catch { result = "No se pudo: \(error)" }
+            do { result = try work() } catch { result = String(localized: "No se pudo: \(String(describing: error))") }
             await MainActor.run {
                 self.status = result
                 self.refreshStatus()
@@ -344,6 +352,6 @@ extension GraphicsBackend {
 }
 
 extension GameProfile {
-    var sourceLabel: String { steamAppId != nil ? "Steam" : "Ejecutable" }
+    var sourceLabel: String { steamAppId != nil ? "Steam" : String(localized: "Ejecutable") }
     var compat: CompatStatus { CompatStatus(profileStatus: status) }
 }

@@ -29,7 +29,7 @@ struct CapabilityBadge: View {
         let c = level?.colors ?? (.clear, NP.mist, NP.line)
         HStack(spacing: 5) {
             Image(systemName: level?.symbol ?? "questionmark").font(.system(size: 10, weight: .heavy))
-            Text(level?.label ?? "Sin datos")
+            Text(level?.label ?? String(localized: "Sin datos"))
         }
         .font(NP.ui(12, .bold))
         .foregroundStyle(c.fg)
@@ -38,7 +38,7 @@ struct CapabilityBadge: View {
         .background(c.bg, in: Capsule())
         .overlay(Capsule().strokeBorder(c.border))
         .fixedSize()
-        .accessibilityLabel("En tu Mac: \(level?.label ?? "sin datos")")
+        .accessibilityLabel("En tu Mac: \(level?.label ?? String(localized: "sin datos"))")
     }
 }
 
@@ -82,7 +82,7 @@ struct CapabilityCard: View {
     private func table(_ r: CapabilityReport) -> some View {
         Grid(alignment: .topLeading, horizontalSpacing: 20, verticalSpacing: 0) {
             GridRow {
-                Text("")
+                Text(verbatim: "")
                 header("Tu Mac")
                 header("Mínimo")
                 header("Recomendado")
@@ -97,7 +97,7 @@ struct CapabilityCard: View {
                         Text(row.resource).font(NP.ui(14, .bold))
                     }
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("\(row.resource): \(row.level?.label ?? "sin datos")")
+                    .accessibilityLabel(Text(verbatim: "\(row.resource): \(row.level?.label ?? String(localized: "sin datos"))"))
                     cell(row.mac, primary: true)
                     cell(row.minimum ?? "—")
                     cell(row.recommended ?? "—")
@@ -128,7 +128,7 @@ struct CapabilityCard: View {
         .padding(.top, 12)
     }
 
-    private func header(_ s: String) -> some View {
+    private func header(_ s: LocalizedStringKey) -> some View {
         Text(s).font(NP.mono(11, .medium)).foregroundStyle(NP.textSecondary).textCase(.uppercase)
     }
 

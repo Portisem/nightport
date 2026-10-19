@@ -79,12 +79,12 @@ public struct Engine {
         let all = list()
         if let name {
             guard let e = all.first(where: { $0.name == name }) else {
-                throw GMError("No existe el motor '\(name)'. Instalados: \(all.map(\.name).joined(separator: ", "))")
+                throw GMError(String(localized: "No existe el motor '\(name)'. Instalados: \(all.map(\.name).joined(separator: ", "))"))
             }
             return e
         }
         guard let first = all.first else {
-            throw GMError("No hay motores instalados en \(Paths.engines.path). Ver docs/MOTOR.md")
+            throw GMError(String(localized: "No hay motores instalados en \(Paths.engines.path). Ver docs/MOTOR.md"))
         }
         return first
     }

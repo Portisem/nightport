@@ -1,0 +1,249 @@
+/*
+  Nightport: English strings.
+
+  Keys are the Spanish source text exactly as written in the code. Interpolations become format
+  specifiers: Int → %lld, String → %@, and a literal % next to an interpolation is written %%.
+  Also covers GMCore text shown in the app (capability verdicts, session insights, Mac checks).
+*/
+
+/* MARK: - Sidebar and menus */
+"Biblioteca" = "Library";
+"Actividad" = "Activity";
+"Agregar juego" = "Add game";
+"Compatibilidad" = "Compatibility";
+"Descargas" = "Downloads";
+"Ajustes" = "Settings";
+"Próximamente" = "Coming soon";
+"Nightport es open source" = "Nightport is open source";
+"Tu aporte mantiene el motor y los perfiles de la comunidad." = "Your support keeps the engine and the community profiles going.";
+"Apoyar" = "Support";
+"Nightport" = "Nightport";
+"Juegos" = "Games";
+"Abrir Steam" = "Open Steam";
+"Ver logs" = "View logs";
+"Cerrar Steam y juegos" = "Quit Steam and games";
+
+/* MARK: - Status line */
+"Listo" = "Ready";
+"motor %@" = "engine %@";
+"sin motor" = "no engine";
+"No pude leer los perfiles de juegos: %@" = "Couldn't read the game profiles: %@";
+" · %lld FPS de promedio" = " · %lld FPS average";
+"Sesión de %@ guardada: %lld min%@" = "%1$@ session saved: %2$lld min%3$@";
+"Abriendo Steam en su espacio aislado…" = "Opening Steam in its isolated space…";
+"Steam abierto · traductor %@" = "Steam open · %@ translation";
+"Preparando %@…" = "Preparing %@…";
+"%@ en marcha · %@" = "%1$@ running · %2$@";
+"Abriendo la instalación de %@ en Steam…" = "Opening the %@ install in Steam…";
+"Confirma la instalación de %@ en la ventana de Steam" = "Confirm the %@ install in the Steam window";
+"Cerrando Steam y juegos…" = "Quitting Steam and games…";
+"Steam y juegos cerrados" = "Steam and games closed";
+"Aún no hay un espacio aislado para Steam." = "There's no isolated space for Steam yet.";
+"No se pudo: %@" = "Failed: %@";
+
+/* MARK: - Library */
+"Steam abierto" = "Steam open";
+"Steam cerrado" = "Steam closed";
+"Buscar juego" = "Search games";
+"Borrar búsqueda" = "Clear search";
+"Todos" = "All";
+"Steam" = "Steam";
+"Ejecutables" = "Executables";
+"Ejecutable" = "Executable";
+"La pantalla está dormida o la sesión bloqueada: Steam y los juegos se pausan hasta que vuelvas." = "The display is asleep or the session is locked: Steam and games pause until you're back.";
+"No hay juegos que coincidan con “%@”." = "No games match “%@”.";
+"En tu biblioteca de Steam, pero no está descargado." = "In your Steam library, but not downloaded.";
+"Última sesión: %@." = "Last session: %@.";
+"Perfil recomendado aplicado." = "Recommended profile applied.";
+"Con tus ajustes personalizados." = "With your custom settings.";
+"Continúa jugando" = "Continue playing";
+"Seleccionado" = "Selected";
+"Jugar" = "Play";
+"Instalar" = "Install";
+"Instalar con Steam" = "Install with Steam";
+"Abre el diálogo de instalación de Steam" = "Opens Steam's install dialog";
+"Ajustes del juego" = "Game settings";
+"No instalado" = "Not installed";
+"Selecciona el juego. Doble clic para jugar." = "Selects the game. Double-click to play.";
+"Selecciona el juego. Doble clic para instalarlo." = "Selects the game. Double-click to install it.";
+
+/* MARK: - Compatibility badges */
+"Excelente" = "Excellent";
+"Jugable" = "Playable";
+"En pruebas" = "Testing";
+"Sin probar" = "Untested";
+"Bloqueado" = "Blocked";
+"Compatibilidad: %@" = "Compatibility: %@";
+
+/* MARK: - Activity */
+"Por juego" = "By game";
+"Sesiones recientes" = "Recent sessions";
+"Todo se guarda solo en tu Mac. Nada sale de ella." = "Everything is stored only on your Mac. Nothing leaves it.";
+"Abrir carpeta de datos" = "Open data folder";
+"Aún no hay sesiones" = "No sessions yet";
+"Mientras Nightport esté abierto, cada partida de tu biblioteca (desde aquí o desde Steam) queda registrada: duración, FPS, CPU, GPU, memoria y temperatura. Con eso te decimos qué ajustar." = "While Nightport is open, every session of a game in your library (launched here or from Steam) is recorded: duration, FPS, CPU, GPU, memory and temperature. We use that to tell you what to tweak.";
+"Tiempo jugado" = "Time played";
+"Sesiones" = "Sessions";
+"Más jugado" = "Most played";
+"FPS promedio" = "Average FPS";
+"Grabando ahora" = "Recording now";
+"FPS" = "FPS";
+"CPU" = "CPU";
+"GPU" = "GPU";
+"MEM" = "MEM";
+"MEMORIA" = "MEMORY";
+"TIEMPO" = "TIME";
+"FRAME" = "FRAME";
+"Esperando la primera muestra…" = "Waiting for the first sample…";
+"%lld sesión" = "%lld session";
+"%lld sesiones" = "%lld sessions";
+"Sin observaciones: la sesión no mostró problemas." = "Nothing to report: the session showed no problems.";
+"%@ · %lld min" = "%1$@ · %2$lld min";
+"Promedio / 5% más lento" = "Average / slowest 5%";
+"Terminó con error" = "Ended with an error";
+"Se calentó" = "Ran hot";
+
+/* MARK: - App settings */
+"Estado de tu Mac" = "Your Mac's status";
+"Revisando…" = "Checking…";
+"Steam y juegos" = "Steam and games";
+"Tu Mac para juegos" = "Your Mac for gaming";
+"%@ · %lld núcleos de GPU · %lld GB" = "%1$@ · %2$lld GPU cores · %3$lld GB";
+"Rinde como una %@ en juegos nativos y como una %@ con traducción (D3DMetal). Estimación." = "Performs like a %1$@ in native games and like a %2$@ with translation (D3DMetal). Estimate.";
+"Versión %@ · motor %@" = "Version %1$@ · engine %2$@";
+"Tus juegos de Windows, en casa en tu Mac." = "Your Windows games, at home on your Mac.";
+
+/* Mac checks: titles come untranslated from GMCore's Doctor; details are translated there. */
+"Espacios aislados" = "Isolated spaces";
+"Juegos compartidos con CrossOver" = "Games shared with CrossOver";
+"Motor de compatibilidad" = "Compatibility engine";
+"Hardware" = "Hardware";
+"macOS" = "macOS";
+"Rosetta 2" = "Rosetta 2";
+"Modo bajo consumo" = "Low Power Mode";
+"Disco libre" = "Free disk space";
+"D3DMetal (Apple GPTK)" = "D3DMetal (Apple GPTK)";
+"Pantalla / sesión" = "Display / session";
+"%lld.%lld.%lld (DXMT pide 15+ para Metal 3.2)" = "%1$lld.%2$lld.%3$lld (DXMT needs 15+ for Metal 3.2)";
+"instalado" = "installed";
+"falta: softwareupdate --install-rosetta" = "missing: softwareupdate --install-rosetta";
+"ACTIVO: limita GPU/CPU, desactívalo para jugar" = "ON: it limits GPU/CPU, turn it off to play";
+"desactivado" = "off";
+"ninguno en %@" = "none in %@";
+"disponible" = "available";
+"no instalado: necesario para DX12 (Wukong)" = "not installed: needed for DX12 (Wukong)";
+"ninguno" = "none";
+"pantalla dormida o sesión bloqueada: Steam y los juegos se congelan sin pantalla activa" = "display asleep or session locked: Steam and games freeze without an active display";
+"activa" = "active";
+
+/* MARK: - Will it run on your Mac? */
+"¿Corre en tu Mac?" = "Will it run on your Mac?";
+"Comparando tu Mac con los requisitos de Steam…" = "Comparing your Mac with Steam's requirements…";
+"Sin datos" = "No data";
+"sin datos" = "no data";
+"En tu Mac: %@" = "On your Mac: %@";
+"Tu Mac" = "Your Mac";
+"Mínimo" = "Minimum";
+"Recomendado" = "Recommended";
+"Mac recomendada:" = "Recommended Mac:";
+"Estimación con los requisitos de Windows de Steam y el costo de traducir con %@. Los benchmarks del perfil, cuando existan, mandan sobre esto." = "Estimated from Steam's Windows requirements and the cost of translating with %@. Profile benchmarks, when available, take precedence.";
+"Va sobrado" = "Plenty of headroom";
+"Cumple lo recomendado" = "Meets recommended";
+"Cumple el mínimo" = "Meets minimum";
+"Por debajo del mínimo" = "Below minimum";
+"%@ · %lld núcleos de GPU · %lld GB · rinde como una %@ en juegos nativos" = "%1$@ · %2$lld GPU cores · %3$lld GB · performs like a %4$@ in native games";
+"%@, %lld núcleos ≈ %@" = "%1$@, %2$lld cores ≈ %3$@";
+"Memoria" = "Memory";
+"Almacenamiento" = "Storage";
+"%@ → %@ unificada" = "%1$@ → %2$@ unified";
+"%@ unificada" = "%@ unified";
+"Instalado" = "Installed";
+"%@ libres" = "%@ free";
+"Faltan %@ libres para descargarlo." = "You need %@ more free space to download it.";
+"No reconocí la tarjeta gráfica que pide Steam; el veredicto solo considera la memoria." = "Couldn't recognize the graphics card Steam asks for; the verdict only considers memory.";
+"Tu Mac tiene la potencia, pero el anti-cheat del juego no funciona fuera de Windows." = "Your Mac has the power, but the game's anti-cheat doesn't work outside Windows.";
+"Bloqueado por anti-cheat." = "Blocked by anti-cheat.";
+"Tu Mac va sobrada: calidad alta, incluso con el costo de la traducción." = "Your Mac has plenty of headroom: high quality, even with the cost of translation.";
+"Tu Mac cumple lo recomendado: calidad media-alta." = "Your Mac meets the recommended specs: medium-high quality.";
+"Tu Mac cumple el mínimo: calidad baja y resolución reducida." = "Your Mac meets the minimum: low quality and reduced resolution.";
+"Tu Mac queda por debajo del mínimo: puede abrir, pero no se jugará bien." = "Your Mac is below the minimum: it may launch, but it won't play well.";
+"Steam no publica requisitos para este juego." = "Steam doesn't publish requirements for this game.";
+"No hay datos suficientes para estimarlo." = "Not enough data to estimate it.";
+"Ninguna Mac actual alcanza lo recomendado con traducción." = "No current Mac reaches the recommended specs with translation.";
+"%@ o superior, con %lld GB" = "%1$@ or better, with %2$lld GB";
+"%@ o superior" = "%@ or better";
+
+/* MARK: - Game settings */
+"%@ · Ajustes" = "%@ · Settings";
+"General" = "General";
+"Gráficos" = "Graphics";
+"Controles" = "Controls";
+"Avanzado" = "Advanced";
+"Traducción gráfica" = "Graphics translation";
+"Cómo convertimos los gráficos de Windows para tu Mac." = "How we convert Windows graphics for your Mac.";
+"Automático (perfil: %@)" = "Automatic (profile: %@)";
+"Límite de FPS" = "FPS limit";
+"Un tope estable se siente mejor que FPS altos con caídas. Próximamente." = "A steady cap feels better than high FPS with drops. Coming soon.";
+"Sin tope" = "No cap";
+"Límite de FPS: próximamente" = "FPS limit: coming soon";
+"DLSS → MetalFX" = "DLSS → MetalFX";
+"Si el juego usa DLSS, lo traducimos al escalado de Apple. Solo con D3DMetal." = "If the game uses DLSS, we translate it to Apple's upscaling. D3DMetal only.";
+"HUD de Metal" = "Metal HUD";
+"Muestra FPS y tiempo de frame mientras juegas." = "Shows FPS and frame time while you play.";
+"Raytracing (DXR)" = "Ray tracing (DXR)";
+"Expone DirectX Raytracing al juego. Experimental." = "Exposes DirectX Raytracing to the game. Experimental.";
+"Modo Retina" = "Retina mode";
+"Resolución completa de la pantalla. Más nítido, más exigente." = "Full display resolution. Sharper, more demanding.";
+"Estás usando el **perfil recomendado**. Si cambias algo, siempre puedes volver a él." = "You're using the **recommended profile**. If you change anything, you can always go back to it.";
+"Estás usando **tus ajustes** encima del perfil recomendado." = "You're using **your settings** on top of the recommended profile.";
+"Restaurar" = "Reset";
+"Vista previa del HUD" = "HUD preview";
+"Valores de ejemplo. Se muestra en una esquina mientras juegas." = "Sample values. It shows in a corner while you play.";
+"Sin control conectado" = "No controller connected";
+"Control conectado" = "Controller connected";
+"Conecta un control por Bluetooth o USB y aparecerá aquí." = "Connect a controller over Bluetooth or USB and it will show up here.";
+"%@. Botones mapeados al estilo Xbox." = "%@. Buttons mapped Xbox-style.";
+"Tus sesiones" = "Your sessions";
+"Gráficos del juego" = "Game graphics";
+"Origen" = "Source";
+"Última sesión" = "Last session";
+"Notas del perfil" = "Profile notes";
+"Mapeo de controles" = "Controller mapping";
+"Por ahora los controles se mapean al estilo Xbox automáticamente. Pronto podrás ajustar cada botón por juego." = "For now, controllers are mapped Xbox-style automatically. Soon you'll be able to adjust each button per game.";
+"Lanzado por Steam (%@)" = "Launched by Steam (%@)";
+"Sincronización" = "Synchronization";
+"AVX en Rosetta" = "AVX in Rosetta";
+"Activado" = "On";
+"Desactivado" = "Off";
+"Variables del perfil" = "Profile variables";
+"Registros de cada partida" = "Logs for each session";
+
+/* MARK: - Session insights (GMCore) */
+"Terminó con un error de Windows. El log de la sesión tiene el detalle." = "Ended with a Windows error. The session log has the details.";
+"Tirones: promedio %lld FPS, pero el 5%% más lento baja a %lld. Suele ser compilación de shaders (mejora al seguir jugando) o carga de texturas; si persiste, un tope de FPS estabiliza." = "Stutter: %1$lld FPS average, but the slowest 5%% drops to %2$lld. It's usually shader compilation (it improves as you keep playing) or texture loading; if it persists, an FPS cap steadies it.";
+"Fluido: %lld FPS de promedio y sin caídas grandes." = "Smooth: %lld FPS average with no big drops.";
+"Por debajo de 30 FPS: baja la resolución o la calidad dentro del juego." = "Below 30 FPS: lower the resolution or the quality inside the game.";
+"Sin FPS medidos: el contador (HUD de Metal oculto) solo se activa cuando Nightport lanza el juego. Si ya estaba abierto o lo abrió Steam, ciérralo y lánzalo desde aquí." = "No FPS measured: the counter (hidden Metal HUD) only turns on when Nightport launches the game. If it was already open or Steam opened it, close it and launch it from here.";
+"La GPU fue al %lld%%: es el límite. Desactiva Modo Retina o baja la resolución para ganar FPS." = "The GPU hit %lld%%: that's the bottleneck. Turn off Retina mode or lower the resolution to gain FPS.";
+"La GPU iba sobrada (%lld%%) pero con pocos FPS: el freno es la CPU o la traducción." = "The GPU had headroom (%lld%%) but FPS was low: the CPU or the translation is holding it back.";
+" Prueba otro traductor: %@." = " Try another translation layer: %@.";
+"Usó %lld GB de %lld GB: cierra otras apps mientras juegas." = "Used %1$lld GB of %2$lld GB: close other apps while you play.";
+"La Mac se calentó al punto de bajar velocidad. Un tope de FPS reduce el calor." = "The Mac got hot enough to slow down. An FPS cap reduces heat.";
+"Mejor traductor medido: %@ (%lld FPS) contra %@." = "Best measured translation layer: %1$@ (%2$lld FPS) vs. %3$@.";
+
+/* MARK: - Errors (GMCore), shown after "Failed:" */
+"Ya existe el bottle '%@' en %@" = "A bottle named '%1$@' already exists at %2$@";
+"wineboot falló (código %lld). Revisa %@" = "wineboot failed (code %1$lld). Check %2$@";
+"No existe el motor '%@'. Instalados: %@" = "There's no engine named '%1$@'. Installed: %2$@";
+"No hay motores instalados en %@. Ver docs/MOTOR.md" = "No engines installed in %@. See docs/MOTOR.md";
+"No encuentro la carpeta profiles/ (usa GMAC_PROFILES)" = "Can't find the profiles/ folder (set GMAC_PROFILES)";
+"No encuentro la carpeta profiles/" = "Can't find the profiles/ folder";
+"No existe el perfil '%@'. Usa `gmac profiles` para ver la lista." = "There's no profile named '%@'. Run `gmac profiles` to see the list.";
+"Perfil inválido %@: %@" = "Invalid profile %1$@: %2$@";
+"El perfil %@ usa Steam pero no tiene steamAppId" = "Profile %@ uses Steam but has no steamAppId";
+"El perfil %@ no define launch.exe" = "Profile %@ doesn't define launch.exe";
+"El motor %@ no trae %@. Disponibles: %@" = "Engine %1$@ doesn't include %2$@. Available: %3$@";
+"D3DMetal necesita un motor 'crossover' (Wine con parches CX). Usa --backend dxmt|dxvk o cambia de motor." = "D3DMetal needs a 'crossover' engine (Wine with CX patches). Use --backend dxmt|dxvk or switch engines.";
+"No se pudo descargar SteamSetup.exe" = "Couldn't download SteamSetup.exe";
+"La instalación de Steam falló (código %lld). Revisa %@" = "Steam installation failed (code %1$lld). Check %2$@";
+"No encuentro la biblioteca de Steam en %@" = "Can't find the Steam library at %@";

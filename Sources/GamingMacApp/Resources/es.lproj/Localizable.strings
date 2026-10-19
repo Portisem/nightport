@@ -1,0 +1,7 @@
+/*
+  Nightport: textos en español.
+
+  El español es el idioma fuente: las claves de en.lproj/Localizable.strings son el texto en
+  español tal como aparece en el código, así que aquí no hace falta repetirlas. Este archivo
+  existe para que macOS sepa que la app está disponible en español.
+*/

@@ -75,7 +75,7 @@ struct Sidebar: View {
 }
 
 struct SidebarItem: View {
-    let title: String
+    let title: LocalizedStringKey
     let symbol: String
     var active = false
     var soon = false
@@ -104,9 +104,9 @@ struct SidebarItem: View {
         }
         .buttonStyle(.plain)
         .disabled(soon)
-        .help(soon ? "Próximamente" : "")
+        .help(soon ? Text("Próximamente") : Text(verbatim: ""))
         .onHover { hover = $0 }
-        .accessibilityHint(soon ? "Próximamente" : "")
+        .accessibilityHint(soon ? Text("Próximamente") : Text(verbatim: ""))
     }
 }
 

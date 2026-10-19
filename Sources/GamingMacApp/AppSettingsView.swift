@@ -95,12 +95,14 @@ struct AppSettingsView: View {
 struct CheckRow: View {
     let check: Doctor.Check
 
-    /// Sin jerga: "Bottles" pasa a "Espacios aislados".
+    /// Sin jerga: "Bottles" pasa a "Espacios aislados". El resto se traduce tal cual (Doctor no lo hace).
     private var title: String {
-        check.title
-            .replacingOccurrences(of: "Bottles GamingMac", with: "Espacios aislados")
-            .replacingOccurrences(of: "Bottles CrossOver (referencia)", with: "Juegos compartidos con CrossOver")
-            .replacingOccurrences(of: "Motores", with: "Motor de compatibilidad")
+        switch check.title {
+        case "Bottles GamingMac": return String(localized: "Espacios aislados")
+        case "Bottles CrossOver (referencia)": return String(localized: "Juegos compartidos con CrossOver")
+        case "Motores": return String(localized: "Motor de compatibilidad")
+        default: return Bundle.main.localizedString(forKey: check.title, value: nil, table: nil)
+        }
     }
 
     private var detail: String {
