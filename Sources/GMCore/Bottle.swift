@@ -38,7 +38,7 @@ public struct Bottle {
     public static func create(_ name: String, engine: Engine, windowsVersion: String = "win10") throws -> Bottle {
         let bottle = Bottle.named(name)
         guard !FileManager.default.fileExists(atPath: bottle.url.path) else {
-            throw GMError("Ya existe el bottle '\(name)' en \(bottle.url.path)")
+            throw GMError(String(localized: "Ya existe el bottle '\(name)' en \(bottle.url.path)"))
         }
         try Paths.ensure(bottle.url)
         try Paths.ensure(Paths.logs)
@@ -47,7 +47,7 @@ public struct Bottle {
 
         print("Inicializando prefix con \(engine.name)… (log: \(log.path))")
         let boot = try Shell.run(engine.wine, ["wineboot", "--init"], environment: env, log: log)
-        guard boot == 0 else { throw GMError("wineboot falló (código \(boot)). Revisa \(log.path)") }
+        guard boot == 0 else { throw GMError(String(localized: "wineboot falló (código \(Int(boot))). Revisa \(log.path)")) }
         try Shell.run(engine.wine, ["winecfg", "/v", windowsVersion], environment: env, log: log)
         try Shell.run(engine.wineserver, ["-w"], environment: env, log: log)
 

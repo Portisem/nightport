@@ -13,7 +13,7 @@ public enum Steam {
         if !FileManager.default.fileExists(atPath: setup.path) {
             print("Descargando SteamSetup.exe…")
             guard try Shell.run(URL(fileURLWithPath: "/usr/bin/curl"), ["-fsSL", "-o", setup.path, installerURL.absoluteString]) == 0 else {
-                throw GMError("No se pudo descargar SteamSetup.exe")
+                throw GMError(String(localized: "No se pudo descargar SteamSetup.exe"))
             }
         }
         let log = Paths.logs.appendingPathComponent("steam-install-\(bottle.name).log")
@@ -21,7 +21,7 @@ public enum Steam {
         let env = engineEnvironment(engine).merging(["WINEPREFIX": bottle.url.path, "WINEMSYNC": "1"]) { _, n in n }
         let code = try Shell.run(engine.wine, [setup.path, "/S"], environment: env, log: log)
         try Shell.run(engine.wineserver, ["-w"], environment: env, log: log)
-        guard code == 0, bottle.steamInstalled else { throw GMError("La instalación de Steam falló (código \(code)). Revisa \(log.path)") }
+        guard code == 0, bottle.steamInstalled else { throw GMError(String(localized: "La instalación de Steam falló (código \(Int(code))). Revisa \(log.path)")) }
     }
 
     /// Enlaza los juegos ya descargados en un bottle de CrossOver: symlink de la carpeta del juego
@@ -31,7 +31,7 @@ public enum Steam {
         let fm = FileManager.default
         let src = Paths.crossOverBottles.appendingPathComponent(crossOverBottle)
             .appendingPathComponent("drive_c/Program Files (x86)/Steam/steamapps")
-        guard fm.fileExists(atPath: src.path) else { throw GMError("No encuentro la biblioteca de Steam en \(src.path)") }
+        guard fm.fileExists(atPath: src.path) else { throw GMError(String(localized: "No encuentro la biblioteca de Steam en \(src.path)")) }
         let dst = bottle.steamDirectory.appendingPathComponent("steamapps")
         try Paths.ensure(dst.appendingPathComponent("common"))
 

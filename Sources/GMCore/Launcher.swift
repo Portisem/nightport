@@ -59,10 +59,10 @@ public enum Launcher {
         let launch = profile.launch ?? .init(mode: .steam, exe: nil, args: nil)
         switch launch.mode {
         case .steam:
-            guard let appId = profile.steamAppId else { throw GMError("El perfil \(profile.id) usa Steam pero no tiene steamAppId") }
+            guard let appId = profile.steamAppId else { throw GMError(String(localized: "El perfil \(profile.id) usa Steam pero no tiene steamAppId")) }
             args = [steamExe, "-applaunch", String(appId)]
         case .exe:
-            guard let exe = launch.exe else { throw GMError("El perfil \(profile.id) no define launch.exe") }
+            guard let exe = launch.exe else { throw GMError(String(localized: "El perfil \(profile.id) no define launch.exe")) }
             args = [exe.contains(":\\") ? exe : steamCommon + exe]
             // steam_appid.txt junto al ejecutable: el juego se conecta al Steam abierto en vez de
             // relanzarse por Steam (que usaría el entorno de Steam y su opción de arranque por defecto).
@@ -118,7 +118,7 @@ public enum Launcher {
             }
             if backend != .wined3d {
                 guard let dir = engine.backendDirectory(backend) else {
-                    throw GMError("El motor \(engine.name) no trae \(backend.rawValue). Disponibles: \(engine.availableBackends.map(\.rawValue))")
+                    throw GMError(String(localized: "El motor \(engine.name) no trae \(backend.rawValue). Disponibles: \(engine.availableBackends.map(\.rawValue).joined(separator: ", "))"))
                 }
                 env["WINEDLLPATH_PRIORITY"] = dir.path
             }
@@ -135,7 +135,7 @@ public enum Launcher {
             }
         } else {
             guard backend != .d3dmetal else {
-                throw GMError("D3DMetal necesita un motor 'crossover' (Wine con parches CX). Usa --backend dxmt|dxvk o cambia de motor.")
+                throw GMError(String(localized: "D3DMetal necesita un motor 'crossover' (Wine con parches CX). Usa --backend dxmt|dxvk o cambia de motor."))
             }
             if backend != .wined3d, let dir = engine.backendDirectory(backend) {
                 let pairs = [("x86_64-windows", "windows/system32"), ("i386-windows", "windows/syswow64")]

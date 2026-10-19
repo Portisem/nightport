@@ -96,7 +96,7 @@ public struct GameProfile: Codable {
 
 public enum ProfileStore {
     public static func loadAll() throws -> [GameProfile] {
-        guard let dir = Paths.profilesDirectory() else { throw GMError("No encuentro la carpeta profiles/ (usa GMAC_PROFILES)") }
+        guard let dir = Paths.profilesDirectory() else { throw GMError(String(localized: "No encuentro la carpeta profiles/ (usa GMAC_PROFILES)")) }
         let files = try FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)
             .filter { $0.pathExtension == "json" }
             .sorted { $0.lastPathComponent < $1.lastPathComponent }
@@ -104,7 +104,7 @@ public enum ProfileStore {
     }
 
     public static func defaults() throws -> GameProfile {
-        guard let dir = Paths.profilesDirectory() else { throw GMError("No encuentro la carpeta profiles/") }
+        guard let dir = Paths.profilesDirectory() else { throw GMError(String(localized: "No encuentro la carpeta profiles/")) }
         return try decode(dir.appendingPathComponent("_defaults.json"))
     }
 
@@ -121,7 +121,7 @@ public enum ProfileStore {
         if let bottle, let app = Steam.installedApps(in: bottle).first(where: { GameProfile.autoID($0.appId) == id }) {
             return base.overlaid(with: .autoDetected(app))
         }
-        throw GMError("No existe el perfil '\(id)'. Usa `gmac profiles` para ver la lista.")
+        throw GMError(String(localized: "No existe el perfil '\(id)'. Usa `gmac profiles` para ver la lista."))
     }
 
     /// Juegos instalados en el Steam del bottle sin perfil curado, ya resueltos sobre los defaults.
@@ -136,7 +136,7 @@ public enum ProfileStore {
         do {
             return try JSONDecoder().decode(GameProfile.self, from: Data(contentsOf: url))
         } catch {
-            throw GMError("Perfil inválido \(url.lastPathComponent): \(error)")
+            throw GMError(String(localized: "Perfil inválido \(url.lastPathComponent): \(String(describing: error))"))
         }
     }
 }
