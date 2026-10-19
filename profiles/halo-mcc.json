@@ -2,24 +2,24 @@
   "id": "halo-mcc",
   "name": "Halo: The Master Chief Collection",
   "steamAppId": 976730,
-  "status": "probando",
+  "status": "jugable",
   "api": "DX11 (64-bit, UE4 shell + motores Blam)",
   "launch": {
     "mode": "exe",
     "exe": "Halo The Master Chief Collection\\MCC\\Binaries\\Win64\\MCC-Win64-Shipping.exe"
   },
   "graphics": {
-    "backend": "dxmt",
+    "backend": "d3dmetal",
     "candidates": [
-      "dxmt",
       "d3dmetal",
+      "dxmt",
       "dxvk"
     ]
   },
   "notes": [
     "Se lanza el ejecutable directo = modo SIN anti-cheat (Easy Anti-Cheat no funciona en Wine). Campaña, Forge y custom offline sí; matchmaking no.",
-    "Hipótesis principal: DXMT (DX11 nativo a Metal) rinde mejor que D3DMetal en este juego. Medir ambos.",
-    "Steam debe estar abierto en el bottle antes de lanzar (DRM de Steamworks).",
-    "2026-10-11: con DXMT 0.80 el menú funciona, pero Halo: Reach crashea al cargar campaña dentro de d3d11.dll (DXMT +0xb81f5, escritura a NULL). Probar D3DMetal."
+    "D3DMetal recomendado: Halo: Reach (Long Night of Solace) estable a ~60 FPS (tope del juego), GPU 3–5 ms por cuadro en M5 Pro (2026-10-19).",
+    "DXMT 0.80 crashea al cargar campaña de Reach dentro de d3d11.dll (+0xb81f5, escritura a NULL). Se deja como alternativa para medir otros Halo.",
+    "Steam debe estar abierto en el bottle antes de lanzar (DRM de Steamworks); Nightport lo abre solo."
   ]
 }

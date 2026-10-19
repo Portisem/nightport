@@ -17,7 +17,7 @@ Estado: 🎯 foco · 🟢 nativo Mac · ⏳ pendiente · ⛔ bloqueado (anti-che
 
 | Juego | API probable | Traductor a probar | Estado | Notas |
 |---|---|---|---|---|
-| Halo: MCC | DX11 64-bit | DXMT → D3DMetal | 🎯 | Sin anti-cheat: campaña/custom sí, matchmaking no |
+| Halo: MCC | DX11 64-bit | **D3DMetal** (DXMT 0.80 crashea en Reach) | ✅ jugable | Reach ~60 FPS estable. Sin anti-cheat: campaña/custom sí, matchmaking no |
 | Black Myth: Wukong | DX12 64-bit | D3DMetal | 🎯 | DLSS→MetalFX; drops = shaders/streaming/pacing |
 | IT Specialist Simulator | DX11 Unity | DXMT | 🎯 | Prueba de humo |
 | Cyberpunk 2077 | — | — | 🟢 | Nativo Mac con MetalFX: dejar nativo |
