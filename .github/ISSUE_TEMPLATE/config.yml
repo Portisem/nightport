@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "💬 Questions and ideas / Preguntas e ideas"
+    url: https://github.com/Portisem/nightport/discussions
+    about: "Ask, share ideas or show what you got running. / Pregunta, comparte ideas o muestra lo que corriste."
+  - name: "🔒 Security issue / Problema de seguridad"
+    url: https://github.com/Portisem/nightport/security/advisories/new
+    about: "Report it privately. / Repórtalo en privado."

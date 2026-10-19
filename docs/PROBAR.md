@@ -1,7 +1,9 @@
 # Probar en tu Mac (con la sesión desbloqueada)
 
+[English](en/TESTING.md)
+
 ```bash
-cd ~/Desktop/Personal/GamingMac
+cd nightport                                # la carpeta del repo
 .build/debug/gmac doctor                    # todo debe salir ✓
 .build/debug/gmac steam start Steam         # inicia sesión (QR con la app de Steam o usuario/contraseña)
 ```

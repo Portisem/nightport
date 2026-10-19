@@ -1,5 +1,7 @@
 # Fase 0: Estrategia
 
+[English](en/STRATEGY.md)
+
 ## 1. ¿Empezar por los AAA o por los viejos?
 
 **Ninguno de los dos en estado puro.** Usamos un enfoque de "bala trazadora": un set pequeño
@@ -57,13 +59,13 @@ App SwiftUI ─┘   (Fase 2: misma lógica con interfaz)
 profiles/*.json             perfiles curados (en el repo, versionados)
 ```
 
-## 4. Redistribución (cuando toque)
+## 4. Redistribución
 
-- Nuestro código: licencia abierta (MIT o GPL, a decidir).
+- Nuestro código: GPL-3.0-or-later; perfiles: CC BY-SA 4.0 (ver `THIRD_PARTY_NOTICES.md`).
 - Wine/DXMT/DXVK/MoltenVK: (L)GPL/zlib/Apache. Se pueden redistribuir publicando fuentes y parches.
-- **D3DMetal (Apple GPTK 3.0):** la licencia permite distribuir el Framework y los
-  Redistributables **solo sin fines comerciales** (secciones 2A-iii y 2C), conservando los avisos
-  de copyright. Si algún día se cobra, hay que volver al modelo de "el usuario importa su GPTK".
+- **D3DMetal (Apple GPTK 3.0):** la licencia permite distribuirlo **solo sin fines comerciales**
+  (secciones 2A-iii y 2C). Decisión: Nightport **nunca lo incluye**; cada usuario lo descarga de
+  Apple y lo importa (`scripts/import-gptk.sh`). `scripts/package-engine.sh` lo excluye al publicar.
 - **Nada de CrossOver propietario** (UI, scripts Perl/Python, cxcompatdb, base .tie) entra al repo.
   `Contents/` está en `.gitignore` y es solo referencia.
 

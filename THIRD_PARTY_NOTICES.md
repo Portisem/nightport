@@ -17,7 +17,7 @@ scripts descargan y compilan los componentes de abajo, cada uno con su propia li
 |---|---|---|
 | Wine (from CodeWeavers' CrossOver 26.3 FOSS sources) + Nightport patches in `patches/wine/` | LGPL-2.1-or-later | https://media.codeweavers.com/pub/crossover/source/ |
 | DXMT | LGPL-2.1-or-later | https://github.com/3Shain/dxmt |
-| DXVK | Zlib | https://github.com/doitsujin/dxvk |
+| DXVK (supported by the launcher; not bundled in the `cx26` engine yet) | Zlib | https://github.com/doitsujin/dxvk |
 | MoltenVK | Apache-2.0 | https://github.com/KhronosGroup/MoltenVK |
 | Wine Mono | Various free licenses (MIT, LGPL and others, see its COPYING) | https://github.com/madewokherd/wine-mono |
 | Wine Gecko | MPL-2.0 | https://gitlab.winehq.org/wine/wine-gecko |

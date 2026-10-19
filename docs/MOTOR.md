@@ -1,5 +1,7 @@
 # El motor (Fase 1)
 
+[English](en/ENGINE.md)
+
 ## Decisión: compilar Wine desde las fuentes FOSS de CrossOver 26.3
 
 | Opción | Pros | Contras |
@@ -24,13 +26,14 @@ una carpeta aislada (`Application Support/GamingMac/toolchain`), sin sudo y fác
 | llvm-mingw (compilador de DLLs PE) | GitHub mstorsjo/llvm-mingw |
 | Wine CX 26.3 | media.codeweavers.com (crossover-sources-26.3.0.tar.gz) |
 | DXMT 0.80 (builtin) | GitHub 3Shain/dxmt |
-| D3DMetal 3.0 | GPTK 3.0 del usuario → `Components/gptk-3.0` ✅ importado |
+| D3DMetal 3.0 | GPTK de Apple que descarga cada usuario → `scripts/import-gptk.sh` (nunca se redistribuye) |
 
 ## Pasos
 
-1. Toolchain (micromamba + conda-forge + llvm-mingw).
+1. Toolchain y fuentes: `scripts/fetch-deps.sh` (micromamba + conda-forge + llvm-mingw + fuentes CX + DXMT + Mono/Gecko).
 2. Compilar Wine CX 26.3 (64-bit + WoW64) → `Engines/cx26/` con layout de CrossOver.
-3. `lib/dxmt` ← DXMT 0.80, `lib64/apple_gptk` ← GPTK 3.0.
+3. `scripts/assemble-engine.sh`: `lib/dxmt` ← DXMT 0.80; `lib64/apple_gptk` ← GPTK solo si el usuario lo importó.
+   Para publicar: `scripts/package-engine.sh` (excluye D3DMetal y genera SHA-256).
 4. `gmac bottle create Steam`, instalar Steam, enlazar juegos existentes.
 
 ## Notas del GPTK 3.0 (Read Me de Apple)

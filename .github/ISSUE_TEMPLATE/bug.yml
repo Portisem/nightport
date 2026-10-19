@@ -1,0 +1,37 @@
+name: "🐞 Bug in Nightport / Error de Nightport"
+description: "Something in the app, the CLI or the scripts is broken. / Algo de la app, la CLI o los scripts falla."
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: "What happened and what you expected / Qué pasó y qué esperabas"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Steps to reproduce / Pasos para reproducirlo"
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: mac
+    attributes:
+      label: "Mac and macOS / Mac y macOS"
+      placeholder: "MacBook Air M2, 16 GB · macOS 26.5"
+    validations:
+      required: true
+  - type: input
+    id: app_version
+    attributes:
+      label: "Nightport version or commit / versión o commit"
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Output or logs / Salida o logs"
+      description: "Replace your macOS username in paths with USER. / Reemplaza tu usuario de macOS en las rutas por USER."
+      render: text

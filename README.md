@@ -1,44 +1,153 @@
-# Nightport
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="brand/logo/png/nightport-lockup-dark-bg.png">
+    <img src="brand/logo/png/nightport-lockup-light-bg.png" alt="Nightport" width="360">
+  </picture>
+</p>
 
-> Tus juegos de Windows, en casa en tu Mac. (Código interno: GamingMac)
+<p align="center"><b>Your Windows games, at home on your Mac.</b></p>
 
-Lanzador personal de juegos de Windows para macOS (Apple Silicon), construido sobre piezas
-abiertas: Wine (fuentes FOSS de CrossOver), DXMT, DXVK y MoltenVK, más D3DMetal de Apple
-(GPTK, lo provee el usuario). Cada juego tiene un **perfil curado** con el traductor gráfico y
-los ajustes que mejor le funcionan, medidos con benchmarks.
+<p align="center">
+  <a href="README.es.md">Español</a> ·
+  <a href="LICENSE">GPL-3.0</a> ·
+  <a href="docs/en/ENGINE.md">How the engine is built</a> ·
+  <a href="docs/en/GAMES.md">Compatibility</a>
+</p>
 
-## App
+---
 
-```bash
-scripts/build-app.sh   # instala ~/Applications/Nightport.app
+Nightport is an open-source launcher that runs Windows games (mainly from Steam) on Apple Silicon
+Macs. It is built on Wine and open graphics translation layers, and its main idea is simple:
+**every game gets a curated profile**, with the graphics translator and settings that work best
+for it, chosen by **measuring** frame rate and frame-time stability instead of guessing.
+
+> **Personal project.** I build Nightport in my spare time, mainly to play my own library. You are
+> welcome to use it, fork it and send improvements, but there is no guaranteed support. Back up
+> your saves. If it's useful to you and you want to chip in, see [Support](#support).
+
+<p align="center">
+  <img src="brand/mockups/01-biblioteca.png" alt="Library screen (design mockup)" width="720">
+</p>
+
+## What it does
+
+- **Per-game graphics translator**: D3DMetal (Apple), DXMT, DXVK or wined3d, picked per game from
+  the profile, with alternatives you can benchmark against each other.
+- **Steam library integration**: games installed in Steam show up automatically; curated profiles
+  improve them. Not-yet-downloaded games open Steam's install dialog.
+- **"Will it run on my Mac?"**: compares a game's published Windows requirements with your Mac's
+  GPU, unified memory and disk, accounting for each translator's overhead.
+- **Activity**: records play sessions (CPU, GPU, memory, temperature, FPS where available) with
+  suggestions. Everything stays on your Mac.
+- **`gmac` CLI** for everything the app does, plus dry runs that show exactly how a game would be
+  launched.
+
+## How it works
+
+```
+Windows game (.exe)
+ └─ Wine 11 (built from CodeWeavers' CrossOver 26.3 free sources + Nightport patches)
+     └─ graphics translator, chosen per game:
+          D3DMetal (Apple GPTK, provided by the user)   DX11/DX12 → Metal
+          DXMT                                          DX10/DX11 → Metal
+          DXVK + MoltenVK                               DX9–11 → Vulkan → Metal
+          wined3d                                       DX1–11 → OpenGL
+ └─ Rosetta 2 (the engine is x86_64)
 ```
 
-Mientras la app está abierta, cada partida de la biblioteca (lanzada desde Nightport o desde
-Steam) se graba en `~/Library/Application Support/GamingMac/Sessions/` y se resume en
-**Actividad** con sugerencias. Los FPS se miden con wined3d (traza `fps` de Wine); con
-D3DMetal/DXMT por ahora solo CPU, GPU, memoria y temperatura. Nada sale de la Mac.
+| Part | What it is |
+|---|---|
+| `Sources/GMCore` | Swift library: engines, bottles (Wine prefixes), profiles, launcher, Steam, diagnostics |
+| `Sources/GamingMacApp` | SwiftUI app (Nightport.app) |
+| `Sources/gmac` | Command-line tool |
+| `patches/wine` | Wine patches (see below) |
+| `profiles/` | One JSON profile per game + `_defaults.json` ([format](docs/PROFILES.md)) |
+| `scripts/` | Fetch dependencies, build and package the engine, build the app |
+| `tools/gmtest` | Small DX11/DX12/display/network test programs |
+| `brand/` | Logo, icon, colors, fonts and mockups |
 
-Marca, tokens y mockups en `brand/`.
+### Engineering highlights
 
-## CLI
+- **Per-game translator selection without proprietary code.** CrossOver picks D3DMetal/DXMT through
+  a closed component. Nightport adds a `WINEDLLPATH_PRIORITY` search path to Wine's loader
+  (`patches/wine/0001`) so each game can load a different translator.
+- **A clang ABI bug that froze Steam.** Apple clang assumes `BOOLEAN` (1-byte) arguments arrive
+  sign/zero-extended to 32 bits; Windows code only writes the low byte. Steam passed
+  `restart=FALSE` to `NtQueryDirectoryObject` with garbage in the upper bits, Wine read it as
+  `TRUE` and looped forever (6 million calls in 25 s). Fixed in 36 syscalls (`patches/wine/0002`).
+- **Per-executable arguments** (`GMAC_APPEND_ARGS`, `patches/wine/0003`) to give Steam's
+  Chromium-based UI the flags it needs.
+- **Reproducible toolchain without Homebrew**: x86_64 dependencies from conda-forge via
+  micromamba, PE DLLs with llvm-mingw, no `sudo`.
+
+## Requirements
+
+- Mac with Apple Silicon and Rosetta 2.
+- macOS 13 or later for the app; macOS 15 or later to use Apple's D3DMetal.
+- Xcode Command Line Tools (Swift 5.9+) to build from source.
+- About 10 GB free for the toolchain and build, plus space for your games.
+
+## Build from source
+
+There are no prebuilt downloads yet. To build everything yourself:
+
+```bash
+git clone https://github.com/Portisem/nightport.git
+cd nightport
+scripts/fetch-deps.sh            # toolchain + sources (~a few GB, no sudo)
+scripts/build-engine.sh all      # compile Wine (30–60 min the first time)
+scripts/assemble-engine.sh       # add DXMT, libraries, Wine Mono/Gecko
+scripts/build-app.sh             # installs ~/Applications/Nightport.app
+```
+
+Optional, for DX12 games: download Apple's **Game Porting Toolkit** from
+[developer.apple.com](https://developer.apple.com/games/) (free Apple account), mount the DMG and
+run `scripts/import-gptk.sh`. Nightport never includes Apple's software.
+
+Then create a bottle and install Steam:
 
 ```bash
 swift build
-.build/debug/gmac doctor                 # estado del sistema
-.build/debug/gmac profiles               # juegos con perfil
-.build/debug/gmac run halo-mcc --dry-run # muestra exactamente cómo se lanzaría
-.build/debug/gmac run halo-mcc --backend d3dmetal --hud
-.build/debug/gmac check left-4-dead-2     # ¿qué tan bien correría en esta Mac?
-.build/debug/gmac steam games Steam      # juegos instalados en el Steam del bottle
-.build/debug/gmac monitor left-4-dead-2   # graba la sesión de un juego abierto (FPS, CPU, GPU, memoria)
-.build/debug/gmac sessions               # sesiones grabadas y sugerencias
+.build/debug/gmac doctor                    # system check
+.build/debug/gmac bottle create Steam
+.build/debug/gmac steam install Steam
+.build/debug/gmac steam start Steam         # sign in to Steam
+.build/debug/gmac run halo-mcc --dry-run    # see exactly how a game would launch
+.build/debug/gmac run halo-mcc --hud        # launch with the Metal performance HUD
 ```
 
-## Documentación
+More: [docs/en/ENGINE.md](docs/en/ENGINE.md) (engine build and findings),
+[docs/en/TESTING.md](docs/en/TESTING.md) (how to test and benchmark a game).
 
-- [docs/FASE0.md](docs/FASE0.md): estrategia, orden de juegos y cómo superar a CrossOver
-- [docs/JUEGOS.md](docs/JUEGOS.md): matriz de compatibilidad de la biblioteca
-- [docs/MOTOR.md](docs/MOTOR.md): cómo se construye el motor
-- `profiles/`: perfiles por juego (`_defaults.json` + uno por juego)
+## Compatibility
 
-`Contents/` es una copia de CrossOver usada solo como referencia. Está en `.gitignore` y nunca se redistribuye.
+Early days: a handful of games are profiled and many more are pending. See
+[docs/en/GAMES.md](docs/en/GAMES.md).
+
+**What cannot work:** online modes protected by kernel-level or Windows-only anti-cheat (Easy
+Anti-Cheat without Wine support, BattlEye, Vanguard). Games with a native Mac version usually run
+better natively.
+
+## Contributing
+
+Bug reports, game reports and profiles are the most valuable contributions. Use the issue forms
+(game request, compatibility report, bug) and see [CONTRIBUTING.md](CONTRIBUTING.md).
+Piracy-related requests are closed.
+
+## Support
+
+Nightport is free and will stay free. If it saves you time and you'd like to support it,
+voluntary donations help cover costs such as Apple's developer membership (needed to sign the app
+so macOS opens it without warnings). Donation links will appear on this repository's **Sponsor**
+button once they are set up.
+
+## License
+
+- Code: [GPL-3.0-or-later](LICENSE).
+- Game profiles: [CC BY-SA 4.0](profiles/LICENSE).
+- The Nightport name and logo: see [TRADEMARKS.md](TRADEMARKS.md).
+- Third-party components: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+Nightport is not affiliated with Apple, Microsoft, Valve or CodeWeavers. Its engine is built from
+the free Wine sources that CodeWeavers publishes; thanks to them and to the Wine, DXMT, DXVK and
+MoltenVK projects.

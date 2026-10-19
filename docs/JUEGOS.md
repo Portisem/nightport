@@ -1,4 +1,8 @@
-# Matriz de juegos (tu biblioteca)
+# Matriz de compatibilidad
+
+[English](en/GAMES.md)
+
+Lista de trabajo: juegos con perfil y candidatos a probar.
 
 API y bits son la mejor estimación inicial; se confirman al probar cada juego.
 Los juegos instalados en el Steam del bottle aparecen solos en la app (`gmac steam games Steam`)

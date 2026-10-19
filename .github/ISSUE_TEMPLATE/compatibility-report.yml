@@ -1,0 +1,75 @@
+name: "📊 Compatibility report / Reporte de compatibilidad"
+description: "Tell us how a game runs. Good reports become profiles. / Cuéntanos cómo corre un juego; los buenos reportes se vuelven perfiles."
+title: "[Report] "
+labels: ["compat-report"]
+body:
+  - type: input
+    id: game
+    attributes:
+      label: "Game / Juego"
+    validations:
+      required: true
+  - type: input
+    id: steam_appid
+    attributes:
+      label: "Steam App ID"
+  - type: dropdown
+    id: result
+    attributes:
+      label: "Result / Resultado"
+      options:
+        - "Perfect / Perfecto"
+        - "Playable with minor issues / Jugable con detalles"
+        - "Major issues / Problemas graves"
+        - "Doesn't start / No arranca"
+        - "Blocked by anti-cheat / Bloqueado por anti-cheat"
+    validations:
+      required: true
+  - type: dropdown
+    id: backend
+    attributes:
+      label: "Graphics translator / Traductor gráfico"
+      options: ["d3dmetal", "dxmt", "dxvk", "wined3d", "Don't know / No sé"]
+    validations:
+      required: true
+  - type: input
+    id: fps
+    attributes:
+      label: "FPS (average / 1% low), resolution, preset"
+      placeholder: "72 / 48 · 1512x982 · High"
+  - type: input
+    id: mac
+    attributes:
+      label: "Mac (chip, memory) / Mac (chip, memoria)"
+      placeholder: "MacBook Pro M3, 18 GB"
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: "macOS"
+      placeholder: "26.5"
+    validations:
+      required: true
+  - type: input
+    id: engine
+    attributes:
+      label: "Engine / Motor"
+      placeholder: "cx26"
+  - type: input
+    id: app_version
+    attributes:
+      label: "Nightport version or commit / versión o commit"
+  - type: textarea
+    id: notes
+    attributes:
+      label: "What happened / Qué pasó"
+      description: "Settings you changed, crashes, where it fails. / Ajustes que cambiaste, crashes, dónde falla."
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Logs (optional / opcional)"
+      description: "From ~/Library/Logs/GamingMac/. Replace your macOS username in paths with USER. / Reemplaza tu usuario de macOS en las rutas por USER."
+      render: text

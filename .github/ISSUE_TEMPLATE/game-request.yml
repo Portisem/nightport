@@ -1,0 +1,47 @@
+name: "🎮 Game request / Solicitud de juego"
+description: "Ask for a game to get a curated profile. / Pide que un juego tenga perfil curado."
+title: "[Request] "
+labels: ["game-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Search existing requests first and add a 👍 instead of opening a duplicate. Games with kernel-level anti-cheat online cannot work.
+        Busca primero si ya existe y deja un 👍 en lugar de duplicar. Los modos online con anti-cheat de kernel no pueden funcionar.
+  - type: input
+    id: game
+    attributes:
+      label: "Game / Juego"
+      placeholder: "Halo: The Master Chief Collection"
+    validations:
+      required: true
+  - type: input
+    id: steam_appid
+    attributes:
+      label: "Steam App ID (optional / opcional)"
+      description: "The number in the Steam store URL. / El número en la URL de la tienda de Steam."
+      placeholder: "976730"
+  - type: dropdown
+    id: store
+    attributes:
+      label: "Store / Tienda"
+      options: ["Steam", "Epic Games", "GOG", "EA app", "Ubisoft Connect", "Battle.net", "Other / Otra"]
+    validations:
+      required: true
+  - type: dropdown
+    id: tried
+    attributes:
+      label: "Have you tried it with Nightport? / ¿Ya lo probaste con Nightport?"
+      options: ["No", "Yes, it doesn't start / Sí, no arranca", "Yes, it runs badly / Sí, corre mal", "Yes, it runs but could be better / Sí, corre pero podría mejorar"]
+  - type: textarea
+    id: notes
+    attributes:
+      label: "Notes / Notas"
+      description: "What happened, which mode you want to play (single player, co-op…). / Qué pasó, qué modo quieres jugar."
+  - type: checkboxes
+    id: legal
+    attributes:
+      label: "Confirmation / Confirmación"
+      options:
+        - label: "I own a legal copy of this game. / Tengo una copia legal de este juego."
+          required: true
