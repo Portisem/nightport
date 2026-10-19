@@ -36,6 +36,7 @@ from `profiles/_defaults.json`. Profiles are licensed under CC BY-SA 4.0.
 | `rosettaAVX` | bool | Expose AVX through Rosetta |
 | `retina` | bool | Wine's Retina mode |
 | `metalHUD` | bool | Show Apple's Metal performance HUD |
+| `frameStats` | bool | Measure FPS for DXMT/D3DMetal/DXVK sessions with the hidden Metal HUD log (default `true`) |
 | `metalFX` | bool | D3DMetal: translate DLSS to MetalFX |
 | `dxr` | bool | D3DMetal: expose DirectX Raytracing |
 | `windowsVersion` | string | e.g. `win10` |

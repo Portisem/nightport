@@ -25,6 +25,9 @@ public struct GameProfile: Codable {
     public var rosettaAVX: Bool?
     public var retina: Bool?
     public var metalHUD: Bool?
+    /// Contador de FPS para el registro de sesiones fuera de wined3d: el HUD de Metal, oculto,
+    /// escribe en el log el intervalo de cada cuadro (MTL_HUD_LOG_ENABLED).
+    public var frameStats: Bool?
     /// D3DMetal: traducir DLSS a MetalFX (D3DM_ENABLE_METALFX, apagado por defecto en GPTK).
     public var metalFX: Bool?
     /// D3DMetal: exponer DirectX Raytracing (D3DM_SUPPORT_DXR).
@@ -63,7 +66,7 @@ public struct GameProfile: Codable {
             id: autoID(app.appId), name: app.name, steamAppId: app.appId, status: nil, api: nil,
             launch: Launch(mode: .steam, exe: nil, args: nil),
             graphics: Graphics(backend: .wined3d, candidates: nil),
-            sync: nil, rosettaAVX: nil, retina: nil, metalHUD: nil, metalFX: nil, dxr: nil,
+            sync: nil, rosettaAVX: nil, retina: nil, metalHUD: nil, frameStats: nil, metalFX: nil, dxr: nil,
             windowsVersion: nil, wineDebug: nil, env: nil, dllOverrides: nil,
             notes: ["Detectado en tu biblioteca de Steam, sin perfil curado todavía.",
                     "Lo lanza Steam (como su botón Jugar), así que usa el traductor del cliente de Steam (OpenGL)."])
@@ -83,6 +86,7 @@ public struct GameProfile: Codable {
         r.rosettaAVX = other.rosettaAVX ?? rosettaAVX
         r.retina = other.retina ?? retina
         r.metalHUD = other.metalHUD ?? metalHUD
+        r.frameStats = other.frameStats ?? frameStats
         r.metalFX = other.metalFX ?? metalFX
         r.dxr = other.dxr ?? dxr
         r.windowsVersion = other.windowsVersion ?? windowsVersion

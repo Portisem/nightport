@@ -75,6 +75,18 @@ Juego de Windows (.exe)
   byte) llegan extendidos a 32 bits; el código de Windows solo escribe el byte bajo. Steam pasaba
   `restart=FALSE` a `NtQueryDirectoryObject` con basura arriba, Wine lo leía como `TRUE` y entraba en
   un ciclo infinito (6 millones de llamadas en 25 s). Corregido en 36 syscalls (`patches/wine/0002`).
+- **FPS para los traductores de Metal sin hooks.** wined3d reporta los FPS por el canal `trace+fps`
+  de Wine, pero DXMT y D3DMetal no escriben FPS en ningún log. El HUD de rendimiento de Metal de
+  macOS (`libMTLHud.dylib`) sí: con `MTL_HUD_ENABLED=1 MTL_HUD_LOG_ENABLED=1 MTL_HUD_HIDDEN=1` no
+  dibuja nada y escribe en stderr una línea `metal-HUD:` cada ~0.8 s: un contador de cuadros y luego
+  el intervalo de cada cuadro que llegó a la pantalla, en ms. Nightport lo activa en todo lanzamiento
+  que no sea wined3d (campo `frameStats` del perfil). Wine manda el stderr del juego a su log; el
+  registro de sesiones divide lo que avanzó el contador entre el tiempo que cubren esos intervalos,
+  así que los FPS cuentan cada Present igual que wined3d (en una pantalla de 120 Hz, gmtest dio 220
+  FPS presentados y 114 mostrados). Verificado en macOS 26 con gmtest en DXMT (224 contra 222 que
+  reporta el propio programa) y D3DMetal (219 contra 219). El formato es de la biblioteca privada del
+  HUD de Apple y puede cambiar. DXVK no está probado, y el HUD ignora ventanas muy chicas (320×200 no
+  registró nada).
 - **Argumentos por ejecutable** (`GMAC_APPEND_ARGS`, `patches/wine/0003`) para darle a la UI de Steam
   (Chromium) las banderas que necesita.
 - **Toolchain reproducible sin Homebrew**: dependencias x86_64 de conda-forge con micromamba, DLLs PE

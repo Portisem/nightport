@@ -92,7 +92,16 @@ public enum Launcher {
         case .none: break
         }
         if profile.rosettaAVX ?? true { env["ROSETTA_ADVERTISE_AVX"] = "1" }
-        if overrides.metalHUD ?? profile.metalHUD ?? false { env["MTL_HUD_ENABLED"] = "1" }
+        let hud = overrides.metalHUD ?? profile.metalHUD ?? false
+        if hud { env["MTL_HUD_ENABLED"] = "1" }
+        // FPS de DXMT/D3DMetal/DXVK: el HUD de Metal (oculto si el usuario no lo pidió) escribe en
+        // stderr una línea `metal-HUD:` con el intervalo de cada cuadro; el registro de sesiones la lee.
+        // wined3d sigue con su canal trace+fps.
+        if backend != .wined3d, profile.frameStats ?? true {
+            env["MTL_HUD_ENABLED"] = "1"
+            env["MTL_HUD_LOG_ENABLED"] = "1"
+            if !hud { env["MTL_HUD_HIDDEN"] = "1" }
+        }
 
         var dllCopies: [(URL, URL)] = []
         var overridesDLL = profile.dllOverrides ?? [:]
