@@ -2,7 +2,8 @@
 # Arma el motor instalado (make install) con sus dependencias y traductores gráficos.
 #   lib64/                 dylibs x86_64 (freetype, gnutls, SDL2, MoltenVK, GStreamer…)
 #   lib/dxmt/              DXMT (builtin): x86_64-windows, i386-windows, x86_64-unix
-#   lib64/apple_gptk/      D3DMetal (GPTK 3.0): external/ + wine/{x86_64-windows,x86_64-unix}
+#   lib64/apple_gptk/      D3DMetal (GPTK) solo si ya lo importaste: es de Apple y no se redistribuye
+#                          (scripts/import-gptk.sh; scripts/package-engine.sh lo excluye al publicar)
 #   engine.json            manifiesto para gmac
 set -euo pipefail
 
@@ -10,7 +11,6 @@ R="${GMAC_BUILD_ROOT:-$HOME/.gamingmac}"
 PREFIX="$R/engines/cx26"
 TC="$R/toolchain/x86"
 DXMT="$R/dl/dxmt/x/v0.80"
-GPTK="$HOME/Library/Application Support/GamingMac/Components/gptk-3.0/lib"
 LINK="$HOME/Library/Application Support/GamingMac/Engines/cx26"
 
 [ -x "$PREFIX/bin/wine" ] || { echo "Falta make install en $PREFIX"; exit 1; }
@@ -34,16 +34,10 @@ cp "$DXMT/x86_64-windows/winemetal.dll" "$PREFIX/lib/wine/x86_64-windows/"
 cp "$DXMT/i386-windows/winemetal.dll" "$PREFIX/lib/wine/i386-windows/"
 rm -f "$PREFIX"/lib/dxmt/*/winemetal.dll
 
-echo "→ D3DMetal (GPTK 3.0)"
-G="$PREFIX/lib64/apple_gptk"
-rm -rf "$G"
-mkdir -p "$G"
-cp -a "$GPTK/external" "$GPTK/wine" "$G/"
-# Read Me de Apple: activar MetalFX renombrando nvngx-on-metalfx → nvngx
-mv "$G/wine/x86_64-unix/nvngx-on-metalfx.so" "$G/wine/x86_64-unix/nvngx.so"
-mv "$G/wine/x86_64-windows/nvngx-on-metalfx.dll" "$G/wine/x86_64-windows/nvngx.dll"
-# Los .so usan @rpath=@loader_path para libd3dshared.dylib
-ln -sf ../../external/libd3dshared.dylib "$G/wine/x86_64-unix/libd3dshared.dylib"
+# D3DMetal es opcional y lo aporta el usuario (licencia de Apple: solo no comercial).
+if ! "$(dirname "$0")/import-gptk.sh" "" "$PREFIX" 2>/dev/null; then
+    echo "→ D3DMetal no encontrado: el motor queda con DXMT, DXVK y wined3d (importa GPTK después con scripts/import-gptk.sh)"
+fi
 
 echo "→ Wine Mono / Gecko (evita el diálogo de instalación al crear bottles)"
 ADD="$R/dl/addons"
@@ -57,7 +51,7 @@ cat > "$PREFIX/engine.json" <<EOF
   "name": "cx26",
   "flavor": "crossover",
   "wineVersion": "11.0 (CrossOver 26.3 FOSS + parches GamingMac)",
-  "notes": "DXMT $(basename "$DXMT"), D3DMetal 3.0"
+  "notes": "DXMT $(basename "$DXMT"); D3DMetal lo importa el usuario"
 }
 EOF
 

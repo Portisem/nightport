@@ -15,3 +15,6 @@
 
 .DS_Store
 tools/gmtest/*.exe
+
+# Paquetes generados por scripts/package-engine.sh
+/dist/
