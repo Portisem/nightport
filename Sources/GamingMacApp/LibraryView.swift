@@ -93,6 +93,7 @@ struct HeroCard: View {
 
     private var sessionText: String {
         var parts: [String] = []
+        if !model.isInstalled(profile) { return "En tu biblioteca de Steam, pero no está descargado." }
         if let when = relativeSession(model.lastSession(profile.id)) { parts.append("Última sesión: \(when).") }
         parts.append(model.userOverrides(profile.id).isEmpty ? "Perfil recomendado aplicado." : "Con tus ajustes personalizados.")
         return parts.joined(separator: " ")
@@ -114,6 +115,7 @@ struct HeroCard: View {
                     .fixedSize(horizontal: false, vertical: true)
                 HStack(spacing: 8) {
                     CompatBadge(status: profile.compat)
+                    if let r = model.capability(profile), r.level != nil { CapabilityBadge(level: r.level) }
                     NPChip(text: profile.sourceLabel)
                     NPChip(text: model.backend(for: profile).label, mono: true)
                     if let api = profile.api?.split(separator: " ").first {
@@ -124,10 +126,18 @@ struct HeroCard: View {
                     .font(NP.ui(15, .regular))
                     .foregroundStyle(NP.textSecondary)
                 HStack(spacing: 12) {
-                    Button { model.play(profile) } label: {
-                        Label("Jugar", systemImage: "play.fill")
+                    if model.isInstalled(profile) {
+                        Button { model.play(profile) } label: {
+                            Label("Jugar", systemImage: "play.fill")
+                        }
+                        .buttonStyle(NPPlayButtonStyle())
+                    } else {
+                        Button { model.install(profile) } label: {
+                            Label("Instalar", systemImage: "arrow.down.circle")
+                        }
+                        .buttonStyle(NPPlayButtonStyle())
+                        .help("Abre el diálogo de instalación de Steam")
                     }
-                    .buttonStyle(NPPlayButtonStyle())
                     Button("Ajustes del juego") { model.screen = .game(profile.id) }
                         .buttonStyle(NPSecondaryButtonStyle())
                 }
@@ -138,6 +148,8 @@ struct HeroCard: View {
             .layoutPriority(1)
         }
         .frame(height: 290)
+        .onAppear { model.loadRequirements(profile) }
+        .onChange(of: profile.id) { _ in model.loadRequirements(profile) }
         .background(NP.surface)
         .clipShape(RoundedRectangle(cornerRadius: NP.Radius.panel, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: NP.Radius.panel, style: .continuous).strokeBorder(NP.elevated))
@@ -162,7 +174,8 @@ struct GameCard: View {
                     .lineLimit(1)
                 HStack(spacing: 8) {
                     CompatBadge(status: profile.compat)
-                    Text(profile.sourceLabel).font(NP.ui(13)).foregroundStyle(NP.textSecondary)
+                    Text(model.isInstalled(profile) ? profile.sourceLabel : "No instalado")
+                        .font(NP.ui(13)).foregroundStyle(NP.textSecondary).lineLimit(1)
                 }
             }
             .padding(16)
@@ -175,15 +188,19 @@ struct GameCard: View {
         .animation(.easeOut(duration: 0.15), value: hover)
         .contentShape(Rectangle())
         .onHover { hover = $0 }
-        .onTapGesture(count: 2) { model.play(profile) }
+        .onTapGesture(count: 2) { model.primaryAction(profile) }
         .onTapGesture { model.featuredID = profile.id }
         .contextMenu {
-            Button("Jugar") { model.play(profile) }
+            if model.isInstalled(profile) {
+                Button("Jugar") { model.play(profile) }
+            } else {
+                Button("Instalar con Steam") { model.install(profile) }
+            }
             Button("Ajustes del juego") { model.screen = .game(profile.id) }
         }
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isButton)
-        .accessibilityHint("Selecciona el juego. Doble clic para jugar.")
+        .accessibilityHint(model.isInstalled(profile) ? "Selecciona el juego. Doble clic para jugar." : "Selecciona el juego. Doble clic para instalarlo.")
     }
 }
 

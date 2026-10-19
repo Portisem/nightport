@@ -1,13 +1,17 @@
 {
   "id": "_defaults",
   "name": "Valores por defecto",
-  "graphics": { "backend": "d3dmetal" },
+  "graphics": {
+    "backend": "d3dmetal"
+  },
   "sync": "msync",
   "rosettaAVX": true,
   "retina": false,
   "metalHUD": false,
   "windowsVersion": "win10",
-  "wineDebug": "-all",
+  "wineDebug": "-all,trace+fps",
   "env": {},
-  "notes": []
+  "notes": [
+    "wineDebug incluye trace+fps: wined3d reporta los FPS cada ~1.5 s y el registro de sesiones los lee."
+  ]
 }

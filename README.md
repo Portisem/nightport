@@ -13,6 +13,11 @@ los ajustes que mejor le funcionan, medidos con benchmarks.
 scripts/build-app.sh   # instala ~/Applications/Nightport.app
 ```
 
+Mientras la app está abierta, cada partida de la biblioteca (lanzada desde Nightport o desde
+Steam) se graba en `~/Library/Application Support/GamingMac/Sessions/` y se resume en
+**Actividad** con sugerencias. Los FPS se miden con wined3d (traza `fps` de Wine); con
+D3DMetal/DXMT por ahora solo CPU, GPU, memoria y temperatura. Nada sale de la Mac.
+
 Marca, tokens y mockups en `brand/`.
 
 ## CLI
@@ -23,6 +28,10 @@ swift build
 .build/debug/gmac profiles               # juegos con perfil
 .build/debug/gmac run halo-mcc --dry-run # muestra exactamente cómo se lanzaría
 .build/debug/gmac run halo-mcc --backend d3dmetal --hud
+.build/debug/gmac check left-4-dead-2     # ¿qué tan bien correría en esta Mac?
+.build/debug/gmac steam games Steam      # juegos instalados en el Steam del bottle
+.build/debug/gmac monitor left-4-dead-2   # graba la sesión de un juego abierto (FPS, CPU, GPU, memoria)
+.build/debug/gmac sessions               # sesiones grabadas y sugerencias
 ```
 
 ## Documentación

@@ -45,12 +45,15 @@ enum LibraryFilter: String, CaseIterable, Identifiable {
 final class AppModel: ObservableObject {
     enum Screen: Hashable {
         case library
+        case activity
         case settings
         case game(String)
     }
 
     @Published var screen: Screen = .library
     @Published var games: [GameProfile] = []
+    /// AppIDs instalados por completo en el Steam del bottle.
+    @Published var installedAppIds: Set<Int> = []
     @Published var overrides: [String: GameOverrides] = OverrideStore.load()
     @Published var search = ""
     @Published var filter: LibraryFilter = .all
@@ -60,8 +63,16 @@ final class AppModel: ObservableObject {
     @Published var steamRunning = false
     @Published var displayAsleep = false
     @Published var checks: [Doctor.Check] = []
+    @Published var mac: MacSpecs?
+    /// Sesiones grabadas (más reciente primero) y la que se está grabando ahora.
+    @Published var sessions: [SessionSummary] = SessionStore.list()
+    @Published var live: (profile: GameProfile, sample: SessionSample?)?
+    /// Requisitos de Steam por AppID (se piden al ver el juego).
+    @Published var requirements: [Int: GameRequirements] = [:]
+    private var requirementsRequested: Set<Int> = []
 
     private var timer: Timer?
+    private var curated: [GameProfile] = []
     /// Perfiles internos que no son juegos.
     private static let hidden: Set<String> = ["_defaults", "steam-client"]
 
@@ -69,7 +80,12 @@ final class AppModel: ObservableObject {
         reload()
         // Para desarrollo/capturas: `open Nightport.app --args -NPScreen settings|<perfil>`
         if let start = UserDefaults.standard.string(forKey: "NPScreen") {
-            screen = start == "settings" ? .settings : (profile(start) != nil ? .game(start) : .library)
+            screen = start == "settings" ? .settings : start == "activity" ? .activity
+                : (profile(start) != nil ? .game(start) : .library)
+        }
+        Task.detached {
+            let specs = MacSpecs.current()
+            await MainActor.run { self.mac = specs }
         }
         timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { [weak self] _ in
             Task { @MainActor in self?.refreshStatus() }
@@ -80,20 +96,89 @@ final class AppModel: ObservableObject {
 
     func reload() {
         do {
-            games = try ProfileStore.loadAll()
+            curated = try ProfileStore.loadAll()
                 .filter { !Self.hidden.contains($0.id) && !$0.id.hasPrefix("gmtest") }
                 .map { try ProfileStore.resolved($0.id) }
-                .sorted { $0.name < $1.name }
         } catch {
             status = "No pude leer los perfiles de juegos: \(error)"
         }
         engineName = (try? Engine.find(nil).name) ?? "sin motor"
+        games = []  // fuerza a refreshLibrary a reconstruir con los perfiles nuevos
         refreshStatus()
     }
 
     func refreshStatus() {
         steamRunning = Steam.isRunning
         displayAsleep = Doctor.displayAsleep
+        refreshLibrary()
+        watchForGames()
+    }
+
+    // MARK: Actividad
+
+    /// Si hay un juego de la biblioteca corriendo (lanzado desde aquí o desde Steam), graba su sesión.
+    private func watchForGames() {
+        guard live == nil, steamRunning || games.contains(where: { $0.steamAppId == nil }),
+              let bottle = try? Self.bottle() else { return }
+        let candidates = games.filter(isInstalled)
+        Task.detached {
+            guard let game = SessionRecorder.runningGame(among: candidates, bottle: bottle),
+                  let recorder = SessionRecorder.attach(profile: game, bottle: bottle) else { return }
+            let claimed = await MainActor.run { () -> Bool in
+                guard self.live == nil else { return false }
+                self.live = (game, nil)
+                return true
+            }
+            guard claimed else { return }
+            // La sesión dura lo que dure el juego: hilo propio, no uno del pool de tareas.
+            let summary: SessionSummary? = await withCheckedContinuation { done in
+                Thread.detachNewThread {
+                    let result = try? recorder.run(waitForStart: 10) { sample in
+                        Task { @MainActor in self.live = (game, sample) }
+                    }
+                    done.resume(returning: result ?? nil)
+                }
+            }
+            await MainActor.run {
+                self.live = nil
+                self.sessions = SessionStore.list()
+                if let summary {
+                    let fps = summary.avgFPS.map { " · \(Int($0)) FPS de promedio" } ?? ""
+                    self.status = "Sesión de \(game.name) guardada: \(Int(summary.duration / 60)) min\(fps)"
+                }
+            }
+        }
+    }
+
+    func sessions(for id: String) -> [SessionSummary] { sessions.filter { $0.profileId == id } }
+
+    func openSessionsFolder() {
+        try? Paths.ensure(SessionStore.directory)
+        NSWorkspace.shared.open(SessionStore.directory)
+    }
+
+    /// Curados + juegos instalados en Steam sin perfil. Solo reconstruye si cambió lo instalado
+    /// (p. ej. terminó una descarga).
+    private func refreshLibrary() {
+        guard let bottle = try? Self.bottle() else {
+            if games.isEmpty { games = curated.sorted { $0.name < $1.name } }
+            return
+        }
+        let installed = Set(Steam.installedApps(in: bottle).map(\.appId))
+        guard installed != installedAppIds || games.isEmpty else { return }
+        installedAppIds = installed
+        let auto = (try? ProfileStore.autoDetected(in: bottle, excluding: curated)) ?? []
+        games = (curated + auto).sorted { $0.name < $1.name }
+    }
+
+    /// Sin steamAppId es un ejecutable propio: se asume presente.
+    func isInstalled(_ p: GameProfile) -> Bool {
+        p.steamAppId.map { installedAppIds.contains($0) } ?? true
+    }
+
+    /// Jugar si está instalado; si no, pedirle a Steam que lo instale.
+    func primaryAction(_ p: GameProfile) {
+        isInstalled(p) ? play(p) : install(p)
     }
 
     func refreshChecks() {
@@ -132,6 +217,29 @@ final class AppModel: ObservableObject {
     func lastSession(_ id: String) -> Date? {
         UserDefaults.standard.object(forKey: "lastSession.\(id)") as? Date
     }
+
+    // MARK: Capacidad de la Mac
+
+    func loadRequirements(_ p: GameProfile) {
+        guard let appId = p.steamAppId, !requirementsRequested.contains(appId) else { return }
+        requirementsRequested.insert(appId)
+        Task {
+            if let req = await Requirements.load(appId: appId) { requirements[appId] = req }
+            else { failedRequirements.insert(appId) }
+        }
+    }
+
+    /// Veredicto para el juego con el traductor que se usaría al jugar. nil mientras carga.
+    func capability(_ p: GameProfile) -> CapabilityReport? {
+        guard let mac else { return nil }
+        let req = p.steamAppId.flatMap { requirements[$0] }
+        if p.steamAppId != nil, req == nil, !requirementsFailed(p) { return nil }
+        return Capability.report(profile: p, requirements: req, mac: mac, backend: backend(for: p), installed: isInstalled(p))
+    }
+
+    /// Ya se pidió y no llegó nada (sin red o Steam no publica requisitos).
+    @Published private var failedRequirements: Set<Int> = []
+    private func requirementsFailed(_ p: GameProfile) -> Bool { p.steamAppId.map(failedRequirements.contains) ?? true }
 
     // MARK: Ajustes por juego
 
@@ -174,10 +282,18 @@ final class AppModel: ObservableObject {
                 try Steam.start(bottle: bottle, engine: engine)
                 Thread.sleep(forTimeInterval: 8)  // que Steam inicie sesión antes del juego
             }
-            let plan = try Launcher.plan(profile: try ProfileStore.resolved(profile.id),
+            let plan = try Launcher.plan(profile: try ProfileStore.resolved(profile.id, bottle: bottle),
                                          engine: engine, bottle: bottle, overrides: user)
             _ = try Launcher.spawn(plan)
             return "\(profile.name) en marcha · \(plan.backend.label)"
+        }
+    }
+
+    func install(_ profile: GameProfile) {
+        guard let appId = profile.steamAppId else { return }
+        perform("Abriendo la instalación de \(profile.name) en Steam…") {
+            try Steam.requestInstall(appId: appId, bottle: try Self.bottle(), engine: try Engine.find(nil))
+            return "Confirma la instalación de \(profile.name) en la ventana de Steam"
         }
     }
 

@@ -14,6 +14,8 @@ struct RootView: View {
                 switch model.screen {
                 case .library:
                     LibraryView()
+                case .activity:
+                    ActivityView()
                 case .settings:
                     AppSettingsView()
                 case .game(let id):
@@ -36,8 +38,10 @@ struct Sidebar: View {
     @EnvironmentObject var model: AppModel
 
     private var inLibrary: Bool {
-        if case .settings = model.screen { return false }
-        return true
+        switch model.screen {
+        case .library, .game: return true
+        default: return false
+        }
     }
 
     var body: some View {
@@ -50,10 +54,13 @@ struct Sidebar: View {
             SidebarItem(title: "Biblioteca", symbol: "square.grid.2x2", active: inLibrary) {
                 model.screen = .library
             }
+            SidebarItem(title: "Actividad", symbol: "waveform.path.ecg", active: model.screen == .activity) {
+                model.screen = .activity
+            }
             SidebarItem(title: "Agregar juego", symbol: "plus", soon: true)
             SidebarItem(title: "Compatibilidad", symbol: "magnifyingglass", soon: true)
             SidebarItem(title: "Descargas", symbol: "arrow.down.to.line", soon: true)
-            SidebarItem(title: "Ajustes", symbol: "gearshape", active: !inLibrary) {
+            SidebarItem(title: "Ajustes", symbol: "gearshape", active: model.screen == .settings) {
                 model.screen = .settings
                 model.refreshChecks()
             }

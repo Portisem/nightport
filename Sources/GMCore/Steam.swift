@@ -56,11 +56,44 @@ public enum Steam {
     }
 
     /// Abre el cliente de Steam con el perfil steam-client (UI de CEF configurada como CrossOver).
+    /// `extraArgs` se pasan a steam.exe (p. ej. una URL steam://); si Steam ya está abierto, se la reenvía.
     @discardableResult
-    public static func start(bottle: Bottle, engine: Engine, overrides: Launcher.Overrides = .init()) throws -> LaunchPlan {
-        let plan = try Launcher.plan(profile: try ProfileStore.resolved("steam-client"), engine: engine, bottle: bottle, overrides: overrides)
+    public static func start(bottle: Bottle, engine: Engine, overrides: Launcher.Overrides = .init(),
+                             extraArgs: [String] = []) throws -> LaunchPlan {
+        var plan = try Launcher.plan(profile: try ProfileStore.resolved("steam-client"), engine: engine, bottle: bottle, overrides: overrides)
+        plan.arguments += extraArgs
         _ = try Launcher.spawn(plan)
         return plan
+    }
+
+    /// Abre el diálogo de instalación de Steam para un juego de la cuenta (el usuario confirma ahí).
+    @discardableResult
+    public static func requestInstall(appId: Int, bottle: Bottle, engine: Engine) throws -> LaunchPlan {
+        try start(bottle: bottle, engine: engine, extraArgs: ["steam://install/\(appId)"])
+    }
+
+    /// Un juego instalado en la biblioteca de Steam de un bottle, según su appmanifest.
+    public struct InstalledApp: Equatable {
+        public let appId: Int
+        public let name: String
+        public let installdir: String
+    }
+
+    /// Paquetes que Steam instala solo y no son juegos.
+    static let nonGames: Set<Int> = [228980]  // Steamworks Common Redistributables
+
+    /// Juegos completamente instalados (StateFlags con el bit 4) en el bottle.
+    public static func installedApps(in bottle: Bottle) -> [InstalledApp] {
+        let dir = bottle.steamDirectory.appendingPathComponent("steamapps")
+        let files = (try? FileManager.default.contentsOfDirectory(atPath: dir.path)) ?? []
+        return files.filter { $0.hasPrefix("appmanifest_") && $0.hasSuffix(".acf") }.compactMap { file in
+            guard let text = try? String(contentsOf: dir.appendingPathComponent(file), encoding: .utf8),
+                  let appId = value(of: "appid", in: text).flatMap(Int.init), !nonGames.contains(appId),
+                  let installdir = value(of: "installdir", in: text),
+                  let flags = value(of: "StateFlags", in: text).flatMap(Int.init), flags & 4 != 0
+            else { return nil }
+            return InstalledApp(appId: appId, name: value(of: "name", in: text) ?? installdir, installdir: installdir)
+        }.sorted { $0.name < $1.name }
     }
 
     /// ¿Hay un steam.exe corriendo (en cualquier bottle)?

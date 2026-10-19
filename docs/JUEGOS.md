@@ -1,6 +1,14 @@
 # Matriz de juegos (tu biblioteca)
 
 API y bits son la mejor estimación inicial; se confirman al probar cada juego.
+Los juegos instalados en el Steam del bottle aparecen solos en la app (`gmac steam games Steam`)
+aunque no tengan perfil: se lanzan con el botón Jugar de Steam. Un perfil curado los mejora.
+
+"¿Corre en tu Mac?" (`gmac check <perfil>` y la pestaña General de cada juego) compara los
+requisitos de Windows que publica Steam con la GPU, la memoria unificada y el disco de la Mac,
+descontando el costo del traductor (D3DMetal ×1.35, DXMT ×1.3, DXVK ×1.5, wined3d ×1.6). Es una
+estimación: los benchmarks de cada perfil mandan sobre ella.
+
 Estado: 🎯 foco · 🟢 nativo Mac · ⏳ pendiente · ⛔ bloqueado (anti-cheat)
 
 | Juego | API probable | Traductor a probar | Estado | Notas |
@@ -30,5 +38,5 @@ Estado: 🎯 foco · 🟢 nativo Mac · ⏳ pendiente · ⛔ bloqueado (anti-che
 | PAYDAY 2 | DX9 | DXVK | ⏳ | |
 | Saints Row: The Third | DX9/DX11 32-bit | DXVK/DXMT | ⏳ | |
 | The Walking Dead | DX9 32-bit | wined3d/DXVK | ⏳ | |
-| **Familia Source** (HL2, HL2:DM, HL:Source, HLDM:S, CS:Source, DoD:Source, Portal, Portal 2, L4D, L4D2, TF2, CS:CZ Deleted Scenes) | DX9 | DXVK/wined3d | ⏳ | Un perfil base para todos |
+| **Familia Source** (HL2, HL2:DM, HL:Source, HLDM:S, CS:Source, DoD:Source, Portal, Portal 2, L4D, L4D2, TF2, CS:CZ Deleted Scenes) | DX9 32-bit | wined3d (el motor no trae DXVK) | ⏳ | Perfiles `left-4-dead` y `left-4-dead-2`; L4D2 puede probar `-vulkan` (winevulkan + MoltenVK) |
 | **Familia GoldSrc** (Half-Life, Opposing Force, Blue Shift, CS 1.6, CS:CZ, DoD, TFC, Ricochet, Deathmatch Classic) | OpenGL 32-bit | wined3d (GL directo) | ⏳ | Un perfil base para todos |

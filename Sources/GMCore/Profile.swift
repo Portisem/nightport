@@ -53,6 +53,22 @@ public struct GameProfile: Codable {
         public var candidates: [GraphicsBackend]?
     }
 
+    public static func autoID(_ appId: Int) -> String { "steam-\(appId)" }
+
+    public var isAutoDetected: Bool { steamAppId.map { id == Self.autoID($0) } ?? false }
+
+    /// Perfil genérico para un juego de Steam sin perfil curado: lo lanza el propio Steam.
+    static func autoDetected(_ app: Steam.InstalledApp) -> GameProfile {
+        GameProfile(
+            id: autoID(app.appId), name: app.name, steamAppId: app.appId, status: nil, api: nil,
+            launch: Launch(mode: .steam, exe: nil, args: nil),
+            graphics: Graphics(backend: .wined3d, candidates: nil),
+            sync: nil, rosettaAVX: nil, retina: nil, metalHUD: nil, metalFX: nil, dxr: nil,
+            windowsVersion: nil, wineDebug: nil, env: nil, dllOverrides: nil,
+            notes: ["Detectado en tu biblioteca de Steam, sin perfil curado todavía.",
+                    "Lo lanza Steam (como su botón Jugar), así que usa el traductor del cliente de Steam (OpenGL)."])
+    }
+
     /// Aplica `other` encima de `self` (other gana; env y dllOverrides se combinan).
     public func overlaid(with other: GameProfile) -> GameProfile {
         var r = self
@@ -92,14 +108,28 @@ public enum ProfileStore {
         return try decode(dir.appendingPathComponent("_defaults.json"))
     }
 
-    /// Perfil final listo para lanzar: defaults + perfil del juego.
-    public static func resolved(_ id: String) throws -> GameProfile {
+    /// Perfil final listo para lanzar: defaults + perfil del juego. Con `bottle`, también resuelve
+    /// los juegos instalados en su Steam que aún no tienen perfil curado (id `steam-<appid>`).
+    public static func resolved(_ id: String, bottle: Bottle? = nil) throws -> GameProfile {
         let base = try defaults()
         if id == base.id { return base }
-        guard let game = try loadAll().first(where: { $0.id == id }) else {
-            throw GMError("No existe el perfil '\(id)'. Usa `gmac profiles` para ver la lista.")
+        let all = try loadAll()
+        // steam-<appid> de un juego que ya tiene perfil curado → el curado
+        if let game = all.first(where: { $0.id == id }) ?? all.first(where: { $0.steamAppId.map(GameProfile.autoID) == id }) {
+            return base.overlaid(with: game)
         }
-        return base.overlaid(with: game)
+        if let bottle, let app = Steam.installedApps(in: bottle).first(where: { GameProfile.autoID($0.appId) == id }) {
+            return base.overlaid(with: .autoDetected(app))
+        }
+        throw GMError("No existe el perfil '\(id)'. Usa `gmac profiles` para ver la lista.")
+    }
+
+    /// Juegos instalados en el Steam del bottle sin perfil curado, ya resueltos sobre los defaults.
+    public static func autoDetected(in bottle: Bottle, excluding curated: [GameProfile]) throws -> [GameProfile] {
+        let base = try defaults()
+        let known = Set(curated.compactMap(\.steamAppId))
+        return Steam.installedApps(in: bottle).filter { !known.contains($0.appId) }
+            .map { base.overlaid(with: .autoDetected($0)) }
     }
 
     private static func decode(_ url: URL) throws -> GameProfile {

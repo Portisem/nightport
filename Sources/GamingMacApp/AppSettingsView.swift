@@ -51,6 +51,21 @@ struct AppSettingsView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .npCard(radius: NP.Radius.panel)
 
+                            if let mac = model.mac {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Tu Mac para juegos").npOverline()
+                                    Text("\(mac.chip) · \(mac.gpuCores) núcleos de GPU · \(Int(mac.memoryGB)) GB")
+                                        .font(NP.ui(15, .bold))
+                                    Text("Rinde como una \(Capability.nativeEquivalent(mac)) en juegos nativos y como una \(Capability.translatedEquivalent(mac, backend: .d3dmetal)) con traducción (D3DMetal). Estimación.")
+                                        .font(NP.ui(13))
+                                        .foregroundStyle(NP.textSecondary)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                                .padding(22)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .npCard(radius: NP.Radius.panel)
+                            }
+
                             VStack(alignment: .leading, spacing: 8) {
                                 NightportLockup(markSize: 26)
                                 Text("Versión \(version) · motor \(model.engineName)")

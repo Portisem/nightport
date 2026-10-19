@@ -10,7 +10,7 @@ struct GameSettingsView: View {
         case general = "General", graphics = "Gráficos", controls = "Controles", advanced = "Avanzado"
         var id: String { rawValue }
     }
-    @State private var tab: Tab = .graphics
+    @State private var tab: Tab = .general
 
     var body: some View {
         VStack(spacing: 0) {
@@ -48,8 +48,13 @@ struct GameSettingsView: View {
                     .minimumScaleFactor(0.6)
             }
             Spacer()
-            Button { model.play(profile) } label: { Label("Jugar", systemImage: "play.fill") }
-                .buttonStyle(NPPlayButtonStyle())
+            if model.isInstalled(profile) {
+                Button { model.play(profile) } label: { Label("Jugar", systemImage: "play.fill") }
+                    .buttonStyle(NPPlayButtonStyle())
+            } else {
+                Button { model.install(profile) } label: { Label("Instalar", systemImage: "arrow.down.circle") }
+                    .buttonStyle(NPPlayButtonStyle())
+            }
         }
     }
 
@@ -322,6 +327,27 @@ struct GeneralTab: View {
     let profile: GameProfile
 
     var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            CapabilityCard(profile: profile)
+            let sessions = model.sessions(for: profile.id)
+            if !sessions.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Tus sesiones").font(NP.ui(18, .bold)).padding(.top, 20)
+                    SessionRow(session: sessions[0])
+                    RowDivider()
+                    InsightList(insights: SessionInsights.analyze(sessions[0], candidates: profile.graphics?.candidates ?? []),
+                                comparison: SessionInsights.backendComparison(sessions))
+                        .padding(.vertical, 14)
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 6)
+                .npCard(radius: NP.Radius.panel)
+            }
+            info
+        }
+    }
+
+    private var info: some View {
         VStack(alignment: .leading, spacing: 0) {
             InfoRow(label: "Compatibilidad") { CompatBadge(status: profile.compat) }
             RowDivider()

@@ -1,0 +1,24 @@
+{
+  "id": "left-4-dead",
+  "name": "Left 4 Dead",
+  "steamAppId": 500,
+  "status": "pendiente",
+  "api": "DX9 (Source, 32-bit)",
+  "launch": {
+    "mode": "steam",
+    "args": [
+      "-novid"
+    ]
+  },
+  "graphics": {
+    "backend": "wined3d",
+    "candidates": [
+      "wined3d"
+    ]
+  },
+  "notes": [
+    "Familia Source: DX9 de 32 bits. DXMT y D3DMetal no traducen DX9 y el motor no trae DXVK, así que va por wined3d (OpenGL).",
+    "La versión nativa de Mac era de 32 bits y ya no corre en macOS moderno.",
+    "Lo lanza Steam (-applaunch), como su botón Jugar: lanzado directo con steam_appid.txt, Source entra en modo -insecure y no conecta a servidores VAC. Hereda el traductor del cliente de Steam (wined3d, igual al del perfil)."
+  ]
+}
